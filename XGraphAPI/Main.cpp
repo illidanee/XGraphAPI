@@ -1,6 +1,9 @@
 #include <tchar.h>
 #include <windows.h>
 
+#include "./Src/CommonType.h"
+#include "./Src/Raster.h"
+
 //Window Size
 const int _gWindowWidth = 800;
 const int _gWindowHeight = 600;
@@ -46,6 +49,27 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	ShowWindow(hWnd, SW_SHOW);
 	UpdateWindow(hWnd);
 
+	//Create and Show BMP
+	HDC hDC = GetDC(hWnd);
+	HDC hMem = CreateCompatibleDC(hDC);
+
+	BITMAPINFO bmpInfo;
+	bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmpInfo.bmiHeader.biWidth = _gWindowWidth;
+	bmpInfo.bmiHeader.biHeight = _gWindowHeight;
+	bmpInfo.bmiHeader.biPlanes = 1;
+	bmpInfo.bmiHeader.biBitCount = 32;
+	bmpInfo.bmiHeader.biCompression = BI_RGB;
+	bmpInfo.bmiHeader.biSizeImage = 0;
+	bmpInfo.bmiHeader.biXPelsPerMeter = 0;
+	bmpInfo.bmiHeader.biYPelsPerMeter = 0;
+	bmpInfo.bmiHeader.biClrUsed = 0;
+	bmpInfo.bmiHeader.biClrImportant = 0;
+
+	void* pBuffer = NULL;
+	HBITMAP hBmp = CreateDIBSection(hDC, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuffer, 0, 0);
+	SelectObject(hMem, hBmp);
+
 	//Msg Loop
 	MSG msg = {};
 	while (true)
@@ -58,6 +82,13 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		//Draw
+		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();		for (int i = 0; i < 100; ++i)
+		{
+			raster.DrawPoint(rand() % _gWindowWidth, rand() % _gWindowHeight, Smile::BGRA8(255, 0, 0, 255), Smile::MAXSIZE);
+		}
+		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}
 
 	return 0;
