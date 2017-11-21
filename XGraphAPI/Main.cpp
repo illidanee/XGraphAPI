@@ -67,7 +67,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	bmpInfo.bmiHeader.biClrImportant = 0;
 
 	void* pBuffer = NULL;
-	HBITMAP hBmp = CreateDIBSection(hDC, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuffer, 0, 0);
+	HBITMAP hBmp = CreateDIBSection(hMem, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuffer, 0, 0);
 	SelectObject(hMem, hBmp);
 
 	//Msg Loop
