@@ -25,7 +25,7 @@ namespace Smile
 		T _a;
 	};
 
-	typedef _BGRA<char> BGRA8;
+	typedef _BGRA<unsigned char> BGRA8U;
 
 	//2Œ¨œÚ¡ø
 	template<typename T>

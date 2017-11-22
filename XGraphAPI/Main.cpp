@@ -86,16 +86,16 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		//Draw
 		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
 		//X
-		raster.DrawLine(Smile::Vec2f(100, 200), Smile::Vec2f(200, 200), Smile::BGRA8(255, 255, 0, 255));
-		raster.DrawLine(Smile::Vec2f(200, 300), Smile::Vec2f(100, 300), Smile::BGRA8(255, 255, 0, 255));
+		raster.DrawLine(Smile::Vec2f(100, 100), Smile::Vec2f(700, 100), Smile::BGRA8U(255, 255, 0, 255));
+		raster.DrawLine(Smile::Vec2f(100, 500), Smile::Vec2f(700, 500), Smile::BGRA8U(255, 255, 0, 255));
 		
 		//Y
-		raster.DrawLine(Smile::Vec2f(100, 300), Smile::Vec2f(100, 200), Smile::BGRA8(255, 255, 0, 255));
-		raster.DrawLine(Smile::Vec2f(200, 200), Smile::Vec2f(200, 300), Smile::BGRA8(255, 255, 0, 255));
+		raster.DrawLine(Smile::Vec2f(100, 100), Smile::Vec2f(100, 500), Smile::BGRA8U(255, 255, 0, 255));
+		raster.DrawLine(Smile::Vec2f(700, 100), Smile::Vec2f(700, 500), Smile::BGRA8U(255, 255, 0, 255));
 
 		//XY
-		raster.DrawLine(Smile::Vec2f(100, 200), Smile::Vec2f(200, 300), Smile::BGRA8(255, 255, 0, 255));
-		raster.DrawLine(Smile::Vec2f(100, 300), Smile::Vec2f(200, 200), Smile::BGRA8(255, 255, 0, 255));
+		raster.DrawLine(Smile::Vec2f(100, 100), Smile::Vec2f(700, 500), Smile::BGRA8U(255, 255, 0, 255), Smile::BGRA8U(0, 255, 255, 255));
+		raster.DrawLine(Smile::Vec2f(100, 500), Smile::Vec2f(700, 100), Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(0, 255, 0, 255));
 
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}
