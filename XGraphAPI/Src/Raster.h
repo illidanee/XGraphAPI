@@ -2,6 +2,7 @@
 
 
 #include <memory.h>
+#include <math.h>
 #include "CommonType.h"
 
 
@@ -16,6 +17,7 @@ namespace Smile
 
 		void Clean();
 		void DrawPoint(unsigned int x, unsigned int y, BGRA8 color, POINTSIZE ps);
+		void DrawLine(Vec2f pos1, Vec2f pos2, BGRA8 color);
 
 	private:
 		void _SetPix(unsigned int x, unsigned int y, BGRA8 color);
