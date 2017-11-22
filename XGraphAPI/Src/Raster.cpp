@@ -67,28 +67,28 @@ namespace Smile
 		{
 			_SetPix(pos1._x, pos1._y, color);
 		}
-		else if (xOffset == 0)
-		{
-			float yMin = pos1._y < pos2._y ? pos1._y : pos2._y;
-			float yMax = pos1._y > pos2._y ? pos1._y : pos2._y;
+		//else if (xOffset == 0)
+		//{
+		//	float yMin = pos1._y < pos2._y ? pos1._y : pos2._y;
+		//	float yMax = pos1._y > pos2._y ? pos1._y : pos2._y;
 
-			for (float y = yMin; y <= yMax; y += 1.0f)
-			{
-				_SetPix(pos2._x, y, color);
-			}
-		}
-		else if (yOffset == 0)
-		{
-			float xMin = pos1._x < pos2._x ? pos1._x : pos2._x;
-			float xMax = pos1._x > pos2._x ? pos1._x : pos2._x;
+		//	for (float y = yMin; y <= yMax; y += 1.0f)
+		//	{
+		//		_SetPix(pos2._x, y, color);
+		//	}
+		//}
+		//else if (yOffset == 0)
+		//{
+		//	float xMin = pos1._x < pos2._x ? pos1._x : pos2._x;
+		//	float xMax = pos1._x > pos2._x ? pos1._x : pos2._x;
 
-			for (float x = xMin; x <= xMax; x += 1.0f)
-			{
-				_SetPix(x, pos2._y, color);
-			}
-		}
-		else
-		{
+		//	for (float x = xMin; x <= xMax; x += 1.0f)
+		//	{
+		//		_SetPix(x, pos2._y, color);
+		//	}
+		//}
+		//else
+		//{
 			if (fabs(xOffset) > fabs(yOffset))
 			{
 				float xMin = pos1._x < pos2._x ? pos1._x : pos2._x;
@@ -113,7 +113,7 @@ namespace Smile
 					_SetPix(x, y, color);
 				}
 			}
-		}
+		//}
 	}
 
 	void XRaster::_SetPix(unsigned int x, unsigned int y, BGRA8 color)
