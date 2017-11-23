@@ -85,37 +85,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw
 		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
-		////Draw Rectangle
-		//Smile::Vec2f rectangle[] = { Smile::Vec2f(100, 100), Smile::Vec2f(700, 100), Smile::Vec2f(700, 500), Smile::Vec2f(100, 500) };
-		//raster.DrawArray(Smile::XRaster::_DRAWLINELOOP, rectangle, sizeof(rectangle) / sizeof(Smile::Vec2f));
-
-		////Draw Circle
-		//Smile::Vec2f center(400.0f, 300.0f);
-		//Smile::Vec2f circle[360];
-		//for (int i = 0; i < 360; ++i)
-		//{
-		//	circle[i] = Smile::Vec2f(cos(ANGLE2RADIAN(i)) * 200 + center._x, sin(ANGLE2RADIAN(i)) * 200 + center._y);
-		//}
-		//raster.DrawArray(Smile::XRaster::_DRAWLINELOOP, circle, sizeof(circle) / sizeof(Smile::Vec2f));
-
-		//Draw Bessel
-		Smile::Vec2f controls[4] = { Smile::Vec2f(100, 100), Smile::Vec2f(150, 300), Smile::Vec2f(650, 300), Smile::Vec2f(700, 500) };
-		Smile::Vec2f bessel[2];
-		for (float t = 0.0f; t < 1.0f; t += 0.01f)
-		{
-			float x = controls[0]._x * pow(1 - t, 3) + controls[1]._x * 3 * pow(1 - t, 2) * t + controls[2]._x * 3 * (1 - t) * pow(t, 2) + controls[3]._x * pow(t, 3);
-			float y = controls[0]._y * pow(1 - t, 3) + controls[1]._y * 3 * pow(1 - t, 2) * t + controls[2]._y * 3 * (1 - t) * pow(t, 2) + controls[3]._y * pow(t, 3);
-			if (t == 0.0f)
-			{
-				bessel[0] = Smile::Vec2f(x, y);
-			}
-			else
-			{
-				bessel[1] = Smile::Vec2f(x, y);
-				raster.DrawArray(Smile::XRaster::_DRAWLINES, bessel, sizeof(bessel) / sizeof(Smile::Vec2f));
-				bessel[0] = Smile::Vec2f(x, y);
-			}
-		}
+		//Draw Solid Rect
+		raster.DrawSolidRect(200, -100, 300, 200, Smile::BGRA8U(0, 255, 0, 255));
 
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}

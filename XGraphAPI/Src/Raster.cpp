@@ -1,5 +1,6 @@
 #include "Raster.h"
 
+#include <algorithm>
 
 namespace Smile 
 {
@@ -23,40 +24,40 @@ namespace Smile
 		memset(_pBuffer, 0, _w * _h * sizeof(BGRA8U));
 	}
 
-	void XRaster::DrawPoint(unsigned int x, unsigned int y, BGRA8U color, POINTSIZE ps)
+	void XRaster::DrawPoint(int x, int y, BGRA8U color, POINTSIZE ps)
 	{
 		switch (ps)
 		{
 		case _MINSIZE:
 		{
-			_SetPix(x, y, color);
+			_SetPixSafe(x, y, color);
 		}
 			break;
 		case _MIDSIZE:
 		{
-			_SetPix(x + 0, y + 0, color);
-			_SetPix(x + 1, y + 0, color);
-			_SetPix(x + 0, y + 1, color);
-			_SetPix(x + 1, y + 1, color);
+			_SetPixSafe(x + 0, y + 0, color);
+			_SetPixSafe(x + 1, y + 0, color);
+			_SetPixSafe(x + 0, y + 1, color);
+			_SetPixSafe(x + 1, y + 1, color);
 		}
 			break;
 		case _MAXSIZE:
 		{
-			_SetPix(x - 1, y - 1, color);
-			_SetPix(x + 0, y - 1, color);
-			_SetPix(x + 1, y - 1, color);
+			_SetPixSafe(x - 1, y - 1, color);
+			_SetPixSafe(x + 0, y - 1, color);
+			_SetPixSafe(x + 1, y - 1, color);
 
-			_SetPix(x - 1, y + 0, color);
-			_SetPix(x + 0, y + 0, color);
-			_SetPix(x + 1, y + 0, color);
+			_SetPixSafe(x - 1, y + 0, color);
+			_SetPixSafe(x + 0, y + 0, color);
+			_SetPixSafe(x + 1, y + 0, color);
 
-			_SetPix(x - 1, y + 1, color);
-			_SetPix(x + 0, y + 1, color);
-			_SetPix(x + 1, y + 1, color);
+			_SetPixSafe(x - 1, y + 1, color);
+			_SetPixSafe(x + 0, y + 1, color);
+			_SetPixSafe(x + 1, y + 1, color);
 		}
 			break;
 		default:
-			_SetPix(x, y, color);
+			_SetPixSafe(x, y, color);
 		}
 	}
 
@@ -72,7 +73,7 @@ namespace Smile
 		
 		if (xOffset == 0 && yOffset == 0)
 		{
-			_SetPix(pos1._x, pos1._y, color);
+			_SetPixSafe(pos1._x, pos1._y, color);
 		}
 		//else if (xOffset == 0)
 		//{
@@ -105,7 +106,7 @@ namespace Smile
 				for (float x = xMin; x < xMax; x += 1.0f)
 				{
 					float y = pos1._y + (x - pos1._x) * slope;
-					_SetPix(x, y, color);
+					_SetPixSafe(x, y, color);
 				}
 			}
 			else
@@ -117,7 +118,7 @@ namespace Smile
 				for (float y = yMin; y < yMax; y += 1.0f)
 				{
 					float x = pos1._x + (y - pos1._y) * slope;
-					_SetPix(x, y, color);
+					_SetPixSafe(x, y, color);
 				}
 			}
 		//}
@@ -130,7 +131,7 @@ namespace Smile
 
 		if (xOffset == 0 && yOffset == 0)
 		{
-			_SetPix(pos1._x, pos1._y, _LerpColor(color1, color2, 0.5f));
+			_SetPixSafe(pos1._x, pos1._y, _LerpColor(color1, color2, 0.5f));
 		}
 
 		if (fabs(xOffset) > fabs(yOffset))
@@ -143,7 +144,7 @@ namespace Smile
 			{
 				float lerp = (x - xMin) / (xMax - xMin);
 				float y = pos1._y + (x - pos1._x) * slope;
-				_SetPix(x, y, _LerpColor(color1, color2, lerp));
+				_SetPixSafe(x, y, _LerpColor(color1, color2, lerp));
 			}
 		}
 		else
@@ -156,7 +157,7 @@ namespace Smile
 			{
 				float lerp = (y - yMin) / (yMax - yMin);
 				float x = pos1._x + (y - pos1._y) * slope;
-				_SetPix(x, y, _LerpColor(color1, color2, lerp));
+				_SetPixSafe(x, y, _LerpColor(color1, color2, lerp));
 			}
 		}
 	}
@@ -202,25 +203,20 @@ namespace Smile
 		}
 	}
 
-	void XRaster::_SetPix(unsigned int x, unsigned int y, BGRA8U color)
+	void XRaster::DrawSolidRect(int x, int y, int w, int h, BGRA8U color)
 	{
-		if (y < 10)
-			return;
+		int left = std::max<int>(x, 0);
+		int top = std::max<int>(y, 0);
+		int right = std::min<int>(x + w, _w);
+		int bottom = std::min<int>(y + h, _h);
 
-		if (x >= _w || y >= _h)
-			return;
-
-		_pBuffer[y * _w + x] = color;
-	}
-
-	BGRA8U XRaster::_LerpColor(BGRA8U color1, BGRA8U color2, float lerp)
-	{
-		BGRA8U color(0, 0, 0, 0);
-		color._b = color1._b + (color1._b - color2._b) * lerp;
-		color._g = color1._g + (color1._g - color2._g) * lerp;
-		color._r = color1._r + (color1._r - color2._r) * lerp;
-		color._a = color1._a + (color1._a - color2._a) * lerp;
-		return color;
+		for (int i = left; i < right; ++i)
+		{
+			for (int j = top; j < bottom; ++j)
+			{
+				_SetPix(i, j, color);
+			}
+		}
 	}
 }
 
