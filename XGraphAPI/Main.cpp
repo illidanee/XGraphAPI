@@ -85,17 +85,19 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw
 		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
-		//X
-		raster.DrawLine(Smile::Vec2f(100, 100), Smile::Vec2f(700, 100), Smile::BGRA8U(255, 255, 0, 255));
-		raster.DrawLine(Smile::Vec2f(100, 500), Smile::Vec2f(700, 500), Smile::BGRA8U(255, 255, 0, 255));
-		
-		//Y
-		raster.DrawLine(Smile::Vec2f(100, 100), Smile::Vec2f(100, 500), Smile::BGRA8U(255, 255, 0, 255));
-		raster.DrawLine(Smile::Vec2f(700, 100), Smile::Vec2f(700, 500), Smile::BGRA8U(255, 255, 0, 255));
+		//Draw Rectangle
+		Smile::Vec2f rectangle[] = { Smile::Vec2f(100, 100), Smile::Vec2f(700, 100), Smile::Vec2f(700, 500), Smile::Vec2f(100, 500) };
+		raster.DrawArray(Smile::XRaster::_DRAWLINELOOP, rectangle, sizeof(rectangle) / sizeof(Smile::Vec2f));
 
-		//XY
-		raster.DrawLine(Smile::Vec2f(100, 100), Smile::Vec2f(700, 500), Smile::BGRA8U(255, 255, 0, 255), Smile::BGRA8U(0, 255, 255, 255));
-		raster.DrawLine(Smile::Vec2f(100, 500), Smile::Vec2f(700, 100), Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(0, 255, 0, 255));
+		//Draw Circle
+		Smile::Vec2f center(400.0f, 300.0f);
+		Smile::Vec2f circle[360];
+		for (int i = 0; i < 360; ++i)
+		{
+			circle[i] = Smile::Vec2f(cos(ANGLE2RADIAN(i)) * 200 + center._x, sin(ANGLE2RADIAN(i)) * 200 + center._y);
+		}
+		raster.DrawArray(Smile::XRaster::_DRAWLINELOOP, circle, sizeof(circle) / sizeof(Smile::Vec2f));
+
 
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}

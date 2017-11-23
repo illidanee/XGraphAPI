@@ -5,6 +5,8 @@ namespace Smile
 {
 
 	XRaster::XRaster(void* pBuffer, unsigned int w, unsigned int h)
+		:
+		BGRA8U_RED(0, 0, 255,255)
 	{
 		_pBuffer = (BGRA8U*)pBuffer;
 		_w = w;
@@ -25,12 +27,12 @@ namespace Smile
 	{
 		switch (ps)
 		{
-		case MINSIZE:
+		case _MINSIZE:
 		{
 			_SetPix(x, y, color);
 		}
 			break;
-		case MIDSIZE:
+		case _MIDSIZE:
 		{
 			_SetPix(x + 0, y + 0, color);
 			_SetPix(x + 1, y + 0, color);
@@ -38,7 +40,7 @@ namespace Smile
 			_SetPix(x + 1, y + 1, color);
 		}
 			break;
-		case MAXSIZE:
+		case _MAXSIZE:
 		{
 			_SetPix(x - 1, y - 1, color);
 			_SetPix(x + 0, y - 1, color);
@@ -56,6 +58,11 @@ namespace Smile
 		default:
 			_SetPix(x, y, color);
 		}
+	}
+
+	void XRaster::DrawPoint(Vec2f pos, BGRA8U color, POINTSIZE ps)
+	{
+		DrawPoint(pos._x, pos._y, color, ps);
 	}
 
 	void XRaster::DrawLine(Vec2f pos1, Vec2f pos2, BGRA8U color)
@@ -151,6 +158,47 @@ namespace Smile
 				float x = pos1._x + (y - pos1._y) * slope;
 				_SetPix(x, y, _LerpColor(color1, color2, lerp));
 			}
+		}
+	}
+
+	void XRaster::DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len)
+	{
+		switch (drawMode)
+		{
+		case _DRAWPOINT:
+		{
+			for (int i = 0; i < len; ++i)
+			{
+				DrawPoint(posArray[i], BGRA8U_RED, _MINSIZE);
+			}
+			break;
+		}
+		case _DRAWLINES:
+		{
+			len = len / 2;
+			for (int i = 0; i < len; ++i)
+			{
+				DrawLine(posArray[2 * i], posArray[2 * i + 1], BGRA8U_RED);
+			}
+			break;
+		}
+		case _DRAWLINESTRIP:
+		{
+			for (int i = 0; i < len - 1; ++i)
+			{
+				DrawLine(posArray[i], posArray[i + 1], BGRA8U_RED);
+			}
+			break;
+		}
+		case _DRAWLINELOOP:
+		{
+			for (int i = 0; i < len - 1; ++i)
+			{
+				DrawLine(posArray[i], posArray[i + 1], BGRA8U_RED);
+			}
+			DrawLine(posArray[0], posArray[len - 1], BGRA8U_RED);
+			break;
+		}
 		}
 	}
 

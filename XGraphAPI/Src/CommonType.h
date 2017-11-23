@@ -3,22 +3,15 @@
 
 namespace Smile 
 {
-	//点的大小
-	enum _POINTSIZE
-	{
-		MINSIZE,
-		MIDSIZE,
-		MAXSIZE,
-	};
-
-	typedef _POINTSIZE POINTSIZE;
+#define PI 3.1415926
+#define ANGLE2RADIAN(angle) ( 2 * PI / 360 * (angle))
 
 	//颜色
 	template<typename T>
 	class _BGRA
 	{
 	public:
-		_BGRA(T r, T g, T b, T a) : _r(r), _g(g), _b(b), _a(a) { }
+		_BGRA(T b, T g, T r, T a) : _b(b), _g(g), _r(r), _a(a) { }
 		T _b;
 		T _g;
 		T _r;
@@ -32,6 +25,7 @@ namespace Smile
 	class _Vector2
 	{
 	public:
+		_Vector2() {}
 		_Vector2(T x, T y) : _x(x), _y(y) {}
 		T _x;
 		T _y;
@@ -44,6 +38,7 @@ namespace Smile
 	class _Vector3
 	{
 	public:
+		_Vector3() {}
 		_Vector3(T x, T y, T z) : _x(x), _y(y), _z(z) {}
 		T _x;
 		T _y;
