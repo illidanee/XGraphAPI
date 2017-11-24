@@ -210,11 +210,33 @@ namespace Smile
 		int right = std::min<int>(x + w, _w);
 		int bottom = std::min<int>(y + h, _h);
 
-		for (int i = left; i < right; ++i)
+		for (int x = left; x < right; ++x)
 		{
-			for (int j = top; j < bottom; ++j)
+			for (int y = top; y < bottom; ++y)
 			{
-				_SetPix(i, j, color);
+				_SetPix(x, y, color);
+			}
+		}
+	}
+
+	void XRaster::DrawColorRect(Vec2f* posArray, BGRA8U* colorArray)
+	{
+		int left = std::max<int>(posArray[0]._x, 0);
+		int top = std::max<int>(posArray[0]._y, 0);
+		int right = std::min<int>(posArray[2]._x, _w);
+		int bottom = std::min<int>(posArray[2]._y, _h);
+
+		int w = right - left;
+		int h = bottom - top;
+		for (int x = left; x < right; ++x)
+		{
+			BGRA8U color1 = _LerpColor(colorArray[0], colorArray[1], (float)(x - left) / w);
+			BGRA8U color2 = _LerpColor(colorArray[3], colorArray[2], (float)(x - left) / w);
+
+			for (int y = top; y < bottom; ++y)
+			{
+				BGRA8U color = _LerpColor(color1, color2, (float)(y - top) / h);
+				_SetPix(x, y, color);
 			}
 		}
 	}

@@ -56,7 +56,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	BITMAPINFO bmpInfo;
 	bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bmpInfo.bmiHeader.biWidth = _gWindowWidth;
-	bmpInfo.bmiHeader.biHeight = _gWindowHeight;
+	bmpInfo.bmiHeader.biHeight = -_gWindowHeight;//bmp原点在左下，窗口原点在左上，取反后bmp远点和窗口远点一致为左上。
 	bmpInfo.bmiHeader.biPlanes = 1;
 	bmpInfo.bmiHeader.biBitCount = 32;
 	bmpInfo.bmiHeader.biCompression = BI_RGB;
@@ -86,7 +86,12 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		//Draw
 		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
 		//Draw Solid Rect
-		raster.DrawSolidRect(200, -100, 300, 200, Smile::BGRA8U(0, 255, 0, 255));
+		//raster.DrawSolidRect(100, 100, 300, 200, Smile::BGRA8U(0, 255, 0, 255));
+
+		//Draw Color Rect
+		Smile::Vec2f posArray[] = { Smile::Vec2f(100, 100), Smile::Vec2f(600, 100), Smile::Vec2f(600, 500), Smile::Vec2f(100, 500) };
+		Smile::BGRA8U colorArray[] = { Smile::BGRA8U(0, 0, 255, 255), Smile::BGRA8U(0, 255, 0, 255), Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(0, 0, 0, 255) };
+		raster.DrawColorRect(posArray, colorArray);
 
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}

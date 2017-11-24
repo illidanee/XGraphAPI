@@ -46,6 +46,7 @@ namespace Smile
 		void DrawLine(Vec2f pos1, Vec2f pos2, BGRA8U color1, BGRA8U color2);
 		void DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len);
 		void DrawSolidRect(int x, int y, int w, int h, BGRA8U color);
+		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
 
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)
@@ -64,10 +65,10 @@ namespace Smile
 		inline BGRA8U _LerpColor(BGRA8U color1, BGRA8U color2, float lerp)
 		{
 			BGRA8U color(0, 0, 0, 0);
-			color._b = color1._b + (color1._b - color2._b) * lerp;
-			color._g = color1._g + (color1._g - color2._g) * lerp;
-			color._r = color1._r + (color1._r - color2._r) * lerp;
-			color._a = color1._a + (color1._a - color2._a) * lerp;
+			color._b = color1._b + (color2._b - color1._b) * lerp;
+			color._g = color1._g + (color2._g - color1._g) * lerp;
+			color._r = color1._r + (color2._r - color1._r) * lerp;
+			color._a = color1._a + (color2._a - color1._a) * lerp;
 			return color;
 		}
 
