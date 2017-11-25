@@ -24,7 +24,7 @@ namespace Smile
 		memset(_pBuffer, 0, _w * _h * sizeof(BGRA8U));
 	}
 
-	void XRaster::DrawPoint(int x, int y, BGRA8U color, POINTSIZE ps)
+	void XRaster::DrawPoint(float x, float y, BGRA8U color, POINTSIZE ps)
 	{
 		switch (ps)
 		{
@@ -203,16 +203,16 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawSolidRect(int x, int y, int w, int h, BGRA8U color)
+	void XRaster::DrawSolidRect(float x, float y, float w, float h, BGRA8U color)
 	{
-		int left = std::max<int>(x, 0);
-		int top = std::max<int>(y, 0);
-		int right = std::min<int>(x + w, _w);
-		int bottom = std::min<int>(y + h, _h);
+		float left = std::max<float>(x, 0);
+		float top = std::max<float>(y, 0);
+		float right = std::min<float>(x + w, _w);
+		float bottom = std::min<float>(y + h, _h);
 
-		for (int x = left; x < right; ++x)
+		for (float x = left; x < right; ++x)
 		{
-			for (int y = top; y < bottom; ++y)
+			for (float y = top; y < bottom; ++y)
 			{
 				_SetPix(x, y, color);
 			}
@@ -221,21 +221,21 @@ namespace Smile
 
 	void XRaster::DrawColorRect(Vec2f* posArray, BGRA8U* colorArray)
 	{
-		int left = std::max<int>(posArray[0]._x, 0);
-		int top = std::max<int>(posArray[0]._y, 0);
-		int right = std::min<int>(posArray[2]._x, _w);
-		int bottom = std::min<int>(posArray[2]._y, _h);
+		float left = std::max<float>(posArray[0]._x, 0);
+		float top = std::max<float>(posArray[0]._y, 0);
+		float right = std::min<float>(posArray[2]._x, _w);
+		float bottom = std::min<float>(posArray[2]._y, _h);
 
-		int w = right - left;
-		int h = bottom - top;
-		for (int x = left; x < right; ++x)
+		float w = right - left;
+		float h = bottom - top;
+		for (float x = left; x < right; ++x)
 		{
-			BGRA8U color1 = _LerpColor(colorArray[0], colorArray[1], (float)(x - left) / w);
-			BGRA8U color2 = _LerpColor(colorArray[3], colorArray[2], (float)(x - left) / w);
+			BGRA8U color1 = _LerpColor(colorArray[0], colorArray[1], (x - left) / w);
+			BGRA8U color2 = _LerpColor(colorArray[3], colorArray[2], (x - left) / w);
 
-			for (int y = top; y < bottom; ++y)
+			for (float y = top; y < bottom; ++y)
 			{
-				BGRA8U color = _LerpColor(color1, color2, (float)(y - top) / h);
+				BGRA8U color = _LerpColor(color1, color2, (y - top) / h);
 				_SetPix(x, y, color);
 			}
 		}

@@ -40,14 +40,13 @@ namespace Smile
 		~XRaster();
 
 		void Clean();
-		void DrawPoint(int x, int y, BGRA8U color, POINTSIZE ps);
+		void DrawPoint(float x, float y, BGRA8U color, POINTSIZE ps);
 		void DrawPoint(Vec2f pos, BGRA8U color, POINTSIZE ps);
 		void DrawLine(Vec2f pos1, Vec2f pos2, BGRA8U color);
 		void DrawLine(Vec2f pos1, Vec2f pos2, BGRA8U color1, BGRA8U color2);
 		void DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len);
-		void DrawSolidRect(int x, int y, int w, int h, BGRA8U color);
+		void DrawSolidRect(float x, float y, float w, float h, BGRA8U color);
 		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
-
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)
 		{
