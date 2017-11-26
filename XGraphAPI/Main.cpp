@@ -85,14 +85,17 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw
 		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
-		//Draw Solid Rect
-		raster.DrawSolidRect(7.9f, 67.8f, 43.5f, 32.3f, Smile::BGRA8U(0, 255, 0, 255));
+		////Draw Solid Rect
+		//raster.DrawSolidRect(7.9f, 67.8f, 43.5f, 32.3f, Smile::BGRA8U(0, 255, 0, 255));
 
-		//Draw Color Rect
-		Smile::Vec2f posArray[] = { Smile::Vec2f(100, 100), Smile::Vec2f(600, 100), Smile::Vec2f(600, 500), Smile::Vec2f(100, 500) };
-		Smile::BGRA8U colorArray[] = { Smile::BGRA8U(0, 0, 255, 255), Smile::BGRA8U(0, 255, 0, 255), Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(0, 0, 0, 255) };
-		raster.DrawColorRect(posArray, colorArray);
-		raster.DrawPoint(5.2f, 7.3f, Smile::BGRA8U(255, 0, 255, 255), Smile::XRaster::_MAXSIZE);
+		////Draw Color Rect
+		//Smile::Vec2f posArray[] = { Smile::Vec2f(100, 100), Smile::Vec2f(600, 100), Smile::Vec2f(600, 500), Smile::Vec2f(100, 500) };
+		//Smile::BGRA8U colorArray[] = { Smile::BGRA8U(0, 0, 255, 255), Smile::BGRA8U(0, 255, 0, 255), Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(0, 0, 0, 255) };
+		//raster.DrawColorRect(posArray, colorArray);
+		//raster.DrawPoint(5.2f, 7.3f, Smile::BGRA8U(255, 0, 255, 255), Smile::XRaster::_MAXSIZE);
+
+		//Draw Triangle
+		raster.DrawTriangle(Smile::Vec2f(200.0f, 100.0f), Smile::Vec2f(500.0f, 180.0f), Smile::Vec2f(300.0f, 400.0f));
 
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}

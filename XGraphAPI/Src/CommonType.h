@@ -11,6 +11,7 @@ namespace Smile
 	class _BGRA
 	{
 	public:
+		_BGRA() {}
 		_BGRA(T b, T g, T r, T a) : _b(b), _g(g), _r(r), _a(a) { }
 		T _b;
 		T _g;

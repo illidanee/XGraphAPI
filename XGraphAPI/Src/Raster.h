@@ -35,6 +35,68 @@ namespace Smile
 
 		typedef _POINTSIZE POINTSIZE;
 
+		//三角形参数
+		class _SpanParam
+		{
+		public:
+			float _xStart;
+			float _xEndl;
+			float _y;
+			BGRA8U _xStartColor;
+			BGRA8U _xEndColor;
+		public:
+			_SpanParam(float xStart, float xEnd, float y, BGRA8U xStartColor, BGRA8U xEndColor)
+			{
+				if (xStart <= xEnd)
+				{
+					_xStart = xStart;
+					_xEndl = xEnd;
+					_y = y;
+					_xStartColor = xStartColor;
+					_xEndColor = xEndColor;
+				}
+				else
+				{
+					_xStart = xEnd;
+					_xEndl = xStart;
+					_y = y;
+					_xStartColor = xEndColor;
+					_xEndColor = xStartColor;
+				}
+			}
+		};
+
+		typedef _SpanParam SpanParam;
+
+		class _Edge
+		{
+		public:
+			float _x1;
+			float _y1;
+			float _x2;
+			float _y2;
+		public:
+			_Edge(float x1, float y1, float x2, float y2)
+			{
+				if (y1 <= y2)
+				{
+					_x1 = x1;
+					_y1 = y1;
+					_x2 = x2;
+					_y2 = y2;
+				}
+				else
+				{
+					_x1 = x2;
+					_y1 = y2;
+					_x2 = x1;
+					_y2 = y1;
+				}
+			}
+		};
+
+		typedef _Edge Edge;
+
 	public:
 		XRaster(void* pBuffer, unsigned int w, unsigned int h);
 		~XRaster();
@@ -47,6 +109,11 @@ namespace Smile
 		void DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len);
 		void DrawSolidRect(float x, float y, float w, float h, BGRA8U color);
 		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
+
+		void DrawSpan(const SpanParam& spanParam);
+		void DrawTrianglePart(const Edge& e1, const Edge& e2);
+		void DrawTriangle(Vec2f pos1, Vec2f pos2, Vec2f pos3);
+
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)
 		{
