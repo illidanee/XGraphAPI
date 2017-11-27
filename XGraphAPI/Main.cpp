@@ -5,8 +5,8 @@
 #include "./Src/Raster.h"
 
 //Window Size
-const int _gWindowWidth = 800;
-const int _gWindowHeight = 600;
+const int _gWindowWidth = 1200;
+const int _gWindowHeight = 900;
 
 //Callback Function
 LRESULT CALLBACK WindowProc(_In_ HWND   hwnd, _In_ UINT   uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
@@ -95,7 +95,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		//raster.DrawPoint(5.2f, 7.3f, Smile::BGRA8U(255, 0, 255, 255), Smile::XRaster::_MAXSIZE);
 
 		//Draw Triangle
-		raster.DrawTriangle(Smile::Vec2f(200.0f, 100.0f), Smile::Vec2f(500.0f, 180.0f), Smile::Vec2f(300.0f, 400.0f));
+		raster.DrawTriangle(Smile::Vec2f(200.0f, 100.0f), Smile::Vec2f(1000.0f, 100.0f), Smile::Vec2f(500.0f, 800.0f));
+		raster.DrawPoint(Smile::Vec2f(200.0f, 100.0f), Smile::BGRA8U(255, 0, 255, 255), Smile::XRaster::_MINSIZE);
 
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}

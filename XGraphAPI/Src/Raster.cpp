@@ -259,8 +259,8 @@ namespace Smile
 		{
 			return;
 		}
-		float step1 = xOffset1 / yOffset1;
-		float scale1 = (e2._y1 - e1._y1) / step1;
+		float step1 = 1.0f / yOffset1;
+		float scale1 = (e2._y1 - e1._y1) / yOffset1;
 
 
 		float xOffset2 = e2._x2 - e2._x1;
@@ -269,7 +269,7 @@ namespace Smile
 		{
 			return;
 		}
-		float step2 = xOffset2 / yOffset2;
+		float step2 = 1.0f / yOffset2;
 		float scale2 = 0;
 
 		for (float y = e2._y1; y < e2._y2; ++y)
@@ -280,8 +280,8 @@ namespace Smile
 			SpanParam span(x1, x2, y, Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(255, 0, 0, 255));
 			DrawSpan(span);
 
-			scale1 += 1.0f / step1;
-			scale2 += 1.0f / step2;
+			scale1 += step1;
+			scale2 += step2;
 		}
 	}
 
@@ -298,6 +298,7 @@ namespace Smile
 			if (lenth > maxLength)
 			{
 				maxIndex = i;
+				maxLength = lenth;
 			}
 		}
 
