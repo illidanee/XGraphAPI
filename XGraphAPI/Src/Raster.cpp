@@ -244,14 +244,14 @@ namespace Smile
 	void XRaster::DrawSpan(const SpanParam& span)
 	{
 		float offset = span._xEndl - span._xStart;
-		for (float x = span._xStart; x < span._xEndl; ++x)
+		for (float x = span._xStart; x <= span._xEndl; ++x)
 		{
 			BGRA8U color = _LerpColor(span._xStartColor, span._xEndColor, offset == 0 ? 0.5f : (x - span._xStart) / offset);
 			_SetPixSafe(x, span._y, color);
 		}
 	}
 
-	void XRaster::DrawTrianglePart(const Edge& e1, const Edge& e2)
+	void XRaster::DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2)
 	{
 		float xOffset1 = e1._x2 - e1._x1;
 		float yOffset1 = e1._y2 - e1._y1;
@@ -272,12 +272,15 @@ namespace Smile
 		float step2 = 1.0f / yOffset2;
 		float scale2 = 0;
 
-		for (float y = e2._y1; y < e2._y2; ++y)
+		for (float y = e2._y1; y <= e2._y2; ++y)
 		{
 			float x1 = e1._x1 + xOffset1 * scale1;
 			float x2 = e2._x1 + xOffset2 * scale2;
 
-			SpanParam span(x1, x2, y, Smile::BGRA8U(255, 0, 0, 255), Smile::BGRA8U(255, 0, 0, 255));
+			Smile::BGRA8U color1 = _LerpColor(e1._color1, e1._color2, scale1);
+			Smile::BGRA8U color2 = _LerpColor(e2._color1, e2._color2, scale2);
+
+			SpanParam span(x1, color1, x2, color2, y);
 			DrawSpan(span);
 
 			scale1 += step1;
@@ -285,9 +288,12 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawTriangle(Vec2f pos1, Vec2f pos2, Vec2f pos3)
+	void XRaster::DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3)
 	{
-		Edge edges[3] = { Edge(pos1._x, pos1._y, pos2._x, pos2._y), Edge(pos2._x, pos2._y, pos3._x, pos3._y), Edge(pos3._x, pos3._y, pos1._x, pos1._y) };
+		EdgeParam edges[3] = { 
+			EdgeParam(pos1._x, pos1._y, color1, pos2._x, pos2._y, color2), 
+			EdgeParam(pos2._x, pos2._y, color2, pos3._x, pos3._y, color3),
+			EdgeParam(pos3._x, pos3._y, color3, pos1._x, pos1._y, color1) };
 
 		int maxIndex = 0;
 		float maxLength = edges[0]._y2 - edges[0]._y1;

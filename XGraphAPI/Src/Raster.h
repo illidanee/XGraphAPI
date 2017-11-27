@@ -40,62 +40,69 @@ namespace Smile
 		{
 		public:
 			float _xStart;
-			float _xEndl;
-			float _y;
 			BGRA8U _xStartColor;
+			float _xEndl;
 			BGRA8U _xEndColor;
+			float _y;
+			
 		public:
-			_SpanParam(float xStart, float xEnd, float y, BGRA8U xStartColor, BGRA8U xEndColor)
+			_SpanParam(float xStart, BGRA8U xStartColor, float xEnd, BGRA8U xEndColor, float y)
 			{
 				if (xStart <= xEnd)
 				{
 					_xStart = xStart;
-					_xEndl = xEnd;
-					_y = y;
 					_xStartColor = xStartColor;
+					_xEndl = xEnd;
 					_xEndColor = xEndColor;
+					_y = y;
 				}
 				else
 				{
 					_xStart = xEnd;
-					_xEndl = xStart;
-					_y = y;
 					_xStartColor = xEndColor;
+					_xEndl = xStart;
 					_xEndColor = xStartColor;
+					_y = y;
 				}
 			}
 		};
 
 		typedef _SpanParam SpanParam;
 
-		class _Edge
+		class _EdgeParam
 		{
 		public:
 			float _x1;
 			float _y1;
+			BGRA8U _color1;
 			float _x2;
 			float _y2;
+			BGRA8U _color2;
 		public:
-			_Edge(float x1, float y1, float x2, float y2)
+			_EdgeParam(float x1, float y1, BGRA8U color1, float x2, float y2, BGRA8U color2)
 			{
 				if (y1 <= y2)
 				{
 					_x1 = x1;
 					_y1 = y1;
+					_color1 = color1;
 					_x2 = x2;
 					_y2 = y2;
+					_color2 = color2;
 				}
 				else
 				{
 					_x1 = x2;
 					_y1 = y2;
+					_color1 = color2;
 					_x2 = x1;
 					_y2 = y1;
+					_color2 = color1;
 				}
 			}
 		};
 
-		typedef _Edge Edge;
+		typedef _EdgeParam EdgeParam;
 
 	public:
 		XRaster(void* pBuffer, unsigned int w, unsigned int h);
@@ -111,8 +118,8 @@ namespace Smile
 		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
 
 		void DrawSpan(const SpanParam& spanParam);
-		void DrawTrianglePart(const Edge& e1, const Edge& e2);
-		void DrawTriangle(Vec2f pos1, Vec2f pos2, Vec2f pos3);
+		void DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2);
+		void DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3);
 
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)

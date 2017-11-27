@@ -95,9 +95,11 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		//raster.DrawPoint(5.2f, 7.3f, Smile::BGRA8U(255, 0, 255, 255), Smile::XRaster::_MAXSIZE);
 
 		//Draw Triangle
-		raster.DrawTriangle(Smile::Vec2f(200.0f, 100.0f), Smile::Vec2f(1000.0f, 100.0f), Smile::Vec2f(500.0f, 800.0f));
-		raster.DrawPoint(Smile::Vec2f(200.0f, 100.0f), Smile::BGRA8U(255, 0, 255, 255), Smile::XRaster::_MINSIZE);
-
+		raster.DrawTriangle(
+			Smile::Vec2f(200.0f, 100.0f), Smile::BGRA8U(255, 0, 0, 255), 
+			Smile::Vec2f(1000.0f, 300.0f), Smile::BGRA8U(0, 255, 0, 255), 
+			Smile::Vec2f(500.0f, 800.0f), Smile::BGRA8U(0, 0, 255, 255));
+		
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}
 
