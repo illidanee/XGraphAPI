@@ -13,10 +13,17 @@ namespace Smile
 	public:
 		_BGRA() {}
 		_BGRA(T b, T g, T r, T a) : _b(b), _g(g), _r(r), _a(a) { }
-		T _b;
-		T _g;
-		T _r;
-		T _a;
+		union
+		{
+			struct 
+			{
+				T _b;
+				T _g;
+				T _r;
+				T _a;
+			};
+			unsigned int _color;
+		};
 	};
 
 	typedef _BGRA<unsigned char> BGRA8U;

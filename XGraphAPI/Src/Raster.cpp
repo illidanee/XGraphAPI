@@ -9,7 +9,7 @@ namespace Smile
 		:
 		BGRA8U_RED(0, 0, 255,255)
 	{
-		_pBuffer = (BGRA8U*)pBuffer;
+		_pBuffer = (unsigned int*)pBuffer;
 		_w = w;
 		_h = h;
 	}

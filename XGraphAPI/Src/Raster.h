@@ -124,7 +124,7 @@ namespace Smile
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)
 		{
-			_pBuffer[y * _w + x] = color;
+			_pBuffer[y * _w + x] = color._color;
 		}
 
 		inline void _SetPixSafe(unsigned int x, unsigned int y, BGRA8U color)
@@ -132,7 +132,7 @@ namespace Smile
 			if (x >= _w || y >= _h)
 				return;
 
-			_pBuffer[y * _w + x] = color;
+			_pBuffer[y * _w + x] = color._color;
 		}
 
 		inline BGRA8U _LerpColor(BGRA8U color1, BGRA8U color2, float lerp)
@@ -148,7 +148,7 @@ namespace Smile
 	private:
 		BGRA8U BGRA8U_RED;
 
-		BGRA8U* _pBuffer;
+		unsigned int* _pBuffer;
 		unsigned int _w;
 		unsigned int _h;
 	};
