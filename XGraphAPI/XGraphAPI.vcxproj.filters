@@ -24,12 +24,18 @@
     <ClCompile Include="Src\Raster.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\XTimer.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CommonType.h">
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Src\Raster.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\XTimer.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

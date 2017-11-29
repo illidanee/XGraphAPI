@@ -1,7 +1,9 @@
+#include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
 
 #include "./Src/CommonType.h"
+#include "./Src/XTimer.h"
 #include "./Src/Raster.h"
 
 //Window Size
@@ -70,6 +72,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	HBITMAP hBmp = CreateDIBSection(hMem, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuffer, 0, 0);
 	SelectObject(hMem, hBmp);
 
+	Smile::Timer timer;
+
 	//Msg Loop
 	MSG msg = {};
 	while (true)
@@ -85,6 +89,9 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw
 		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
+		//Timer Begin
+		timer.Begin();
+
 		////Draw Solid Rect
 		//raster.DrawSolidRect(7.9f, 67.8f, 43.5f, 32.3f, Smile::BGRA8U(0, 255, 0, 255));
 
@@ -100,6 +107,13 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			Smile::Vec2f(1000.0f, 300.0f), Smile::BGRA8U(0, 255, 0, 255), 
 			Smile::Vec2f(500.0f, 800.0f), Smile::BGRA8U(0, 0, 255, 255));
 		
+		//Timer End
+		timer.End();
+		char timeBuffer[256] = {0};
+		sprintf(timeBuffer, "time: %f s", timer.GetElapsedTime());
+		TextOutA(hMem, 10, 10, timeBuffer, strlen(timeBuffer));
+	
+		//Render to DC
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}
 
