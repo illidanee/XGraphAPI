@@ -243,26 +243,30 @@ namespace Smile
 
 	void XRaster::DrawSpan(const SpanParam& span)
 	{
+		//计算标准步长偏移
 		float offset = span._xEndl - span._xStart;
-		for (float x = span._xStart; x <= span._xEndl; ++x)
+		float step = 1.0f / offset;
+		float scale = 0.0f;
+
+		//优化x方向
+		float startX = std::max<float>(span._xStart, 0);
+		float endX = std::min<float>(span._xEndl, _w);
+		scale += (startX - span._xStart) / offset;
+
+		//for (float x = span._xStart; x < span._xEndl; ++x)
+		for (float x = startX; x < endX; ++x)
 		{
-			BGRA8U color = _LerpColor(span._xStartColor, span._xEndColor, offset == 0 ? 0.5f : (x - span._xStart) / offset);
+			BGRA8U color = _LerpColor(span._xStartColor, span._xEndColor, scale);
+			
 			_SetPixSafe(x, span._y, color);
+
+			scale += step;
 		}
 	}
 
 	void XRaster::DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2)
 	{
-		float xOffset1 = e1._x2 - e1._x1;
-		float yOffset1 = e1._y2 - e1._y1;
-		if (yOffset1 == 0)
-		{
-			return;
-		}
-		float step1 = 1.0f / yOffset1;
-		float scale1 = (e2._y1 - e1._y1) / yOffset1;
-
-
+		//先计算e2 - 计算标准步长偏移
 		float xOffset2 = e2._x2 - e2._x1;
 		float yOffset2 = e2._y2 - e2._y1;
 		if (yOffset2 == 0)
@@ -272,13 +276,32 @@ namespace Smile
 		float step2 = 1.0f / yOffset2;
 		float scale2 = 0;
 
-		for (float y = e2._y1; y <= e2._y2; ++y)
+		//优化Y方向
+		float startY2 = std::max<float>(e2._y1, 0);
+		float endY2 = std::min<float>(e2._y2, _h);
+		scale2 = (startY2 - e2._y1) / yOffset2;
+
+		//在计算e1 - 计算标准步长偏移
+		float xOffset1 = e1._x2 - e1._x1;
+		float yOffset1 = e1._y2 - e1._y1;
+		if (yOffset1 == 0)
+		{
+			return;
+		}
+		float step1 = 1.0f / yOffset1;
+		float scale1 = (e2._y1 - e1._y1) / yOffset1;
+
+		//优化Y方向 - 使用 startY2 计算。
+		scale1 = (startY2 - e1._y1) / yOffset1;
+
+		//for (float y = e2._y1; y < e2._y2; ++y)
+		for (float y = startY2; y < endY2; ++y)
 		{
 			float x1 = e1._x1 + xOffset1 * scale1;
 			float x2 = e2._x1 + xOffset2 * scale2;
 
-			Smile::BGRA8U color1 = _LerpColor(e1._color1, e1._color2, scale1);
-			Smile::BGRA8U color2 = _LerpColor(e2._color1, e2._color2, scale2);
+			BGRA8U color1 = _LerpColor(e1._color1, e1._color2, scale1);
+			BGRA8U color2 = _LerpColor(e2._color1, e2._color2, scale2);
 
 			SpanParam span(x1, color1, x2, color2, y);
 			DrawSpan(span);

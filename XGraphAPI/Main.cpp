@@ -103,14 +103,16 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Triangle
 		raster.DrawTriangle(
-			Smile::Vec2f(200.0f, 100.0f), Smile::BGRA8U(255, 0, 0, 255), 
-			Smile::Vec2f(1000.0f, 300.0f), Smile::BGRA8U(0, 255, 0, 255), 
-			Smile::Vec2f(500.0f, 800.0f), Smile::BGRA8U(0, 0, 255, 255));
-		
+			Smile::Vec2f(200.0f, -500.0f), Smile::BGRA8U(255, 0, 0, 255), 
+			Smile::Vec2f(1700.0f, 300.0f), Smile::BGRA8U(0, 255, 0, 255), 
+			Smile::Vec2f(-500.0f, 800.0f), Smile::BGRA8U(0, 0, 255, 255));
+
+		//9000 -> x : 7000 -> x + y : 48000
+
 		//Timer End
 		timer.End();
 		char timeBuffer[256] = {0};
-		sprintf(timeBuffer, "time: %f s", timer.GetElapsedTime());
+		sprintf(timeBuffer, "time: %f ns", timer.GetElapsedTime());
 		TextOutA(hMem, 10, 10, timeBuffer, strlen(timeBuffer));
 	
 		//Render to DC
