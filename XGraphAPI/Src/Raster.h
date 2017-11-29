@@ -8,7 +8,6 @@
 
 namespace Smile 
 {
-
 	class XRaster
 	{
 	public:
@@ -34,7 +33,8 @@ namespace Smile
 		};
 
 		typedef _POINTSIZE POINTSIZE;
-
+	
+	private:
 		//三角形参数
 		class _SpanParam
 		{
@@ -116,9 +116,6 @@ namespace Smile
 		void DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len);
 		void DrawSolidRect(float x, float y, float w, float h, BGRA8U color);
 		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
-
-		void DrawSpan(const SpanParam& spanParam);
-		void DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2);
 		void DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3);
 
 	private:
@@ -145,6 +142,9 @@ namespace Smile
 			return color;
 		}
 
+		void _DrawSpan(const SpanParam& spanParam);
+		void _DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2);
+
 	private:
 		BGRA8U BGRA8U_RED;
 
@@ -152,5 +152,4 @@ namespace Smile
 		unsigned int _w;
 		unsigned int _h;
 	};
-
 }

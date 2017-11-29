@@ -241,7 +241,34 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawSpan(const SpanParam& span)
+	void XRaster::DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3)
+	{
+		EdgeParam edges[3] = { 
+			EdgeParam(pos1._x, pos1._y, color1, pos2._x, pos2._y, color2), 
+			EdgeParam(pos2._x, pos2._y, color2, pos3._x, pos3._y, color3),
+			EdgeParam(pos3._x, pos3._y, color3, pos1._x, pos1._y, color1) };
+
+		int maxIndex = 0;
+		float maxLength = edges[0]._y2 - edges[0]._y1;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			float lenth = edges[i]._y2 - edges[i]._y1;
+			if (lenth > maxLength)
+			{
+				maxIndex = i;
+				maxLength = lenth;
+			}
+		}
+
+		int minIndex1 = (maxIndex + 1) % 3;
+		int minIndex2 = (maxIndex + 2) % 3;
+
+		_DrawTrianglePart(edges[maxIndex], edges[minIndex1]);
+		_DrawTrianglePart(edges[maxIndex], edges[minIndex2]);
+	}	
+	
+	void XRaster::_DrawSpan(const SpanParam& span)
 	{
 		//计算标准步长偏移
 		float offset = span._xEndl - span._xStart;
@@ -257,14 +284,14 @@ namespace Smile
 		for (float x = startX; x < endX; ++x)
 		{
 			BGRA8U color = _LerpColor(span._xStartColor, span._xEndColor, scale);
-			
-			_SetPixSafe(x, span._y, color);
+
+			_SetPix(x, span._y, color);
 
 			scale += step;
 		}
 	}
 
-	void XRaster::DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2)
+	void XRaster::_DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2)
 	{
 		//先计算e2 - 计算标准步长偏移
 		float xOffset2 = e2._x2 - e2._x1;
@@ -304,38 +331,11 @@ namespace Smile
 			BGRA8U color2 = _LerpColor(e2._color1, e2._color2, scale2);
 
 			SpanParam span(x1, color1, x2, color2, y);
-			DrawSpan(span);
+			_DrawSpan(span);
 
 			scale1 += step1;
 			scale2 += step2;
 		}
-	}
-
-	void XRaster::DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3)
-	{
-		EdgeParam edges[3] = { 
-			EdgeParam(pos1._x, pos1._y, color1, pos2._x, pos2._y, color2), 
-			EdgeParam(pos2._x, pos2._y, color2, pos3._x, pos3._y, color3),
-			EdgeParam(pos3._x, pos3._y, color3, pos1._x, pos1._y, color1) };
-
-		int maxIndex = 0;
-		float maxLength = edges[0]._y2 - edges[0]._y1;
-
-		for (int i = 0; i < 3; ++i)
-		{
-			float lenth = edges[i]._y2 - edges[i]._y1;
-			if (lenth > maxLength)
-			{
-				maxIndex = i;
-				maxLength = lenth;
-			}
-		}
-
-		int minIndex1 = (maxIndex + 1) % 3;
-		int minIndex2 = (maxIndex + 2) % 3;
-
-		DrawTrianglePart(edges[maxIndex], edges[minIndex1]);
-		DrawTrianglePart(edges[maxIndex], edges[minIndex2]);
 	}
 }
 
