@@ -206,13 +206,13 @@ namespace Smile
 	void XRaster::DrawSolidRect(float x, float y, float w, float h, BGRA8U color)
 	{
 		float left = std::max<float>(x, 0);
-		float top = std::max<float>(y, 0);
+		float bottom = std::max<float>(y, 0);
 		float right = std::min<float>(x + w, _w);
-		float bottom = std::min<float>(y + h, _h);
+		float top = std::min<float>(y + h, _h);
 
 		for (float x = left; x < right; ++x)
 		{
-			for (float y = top; y < bottom; ++y)
+			for (float y = bottom; y < top; ++y)
 			{
 				_SetPix(x, y, color);
 			}
@@ -222,20 +222,20 @@ namespace Smile
 	void XRaster::DrawColorRect(Vec2f* posArray, BGRA8U* colorArray)
 	{
 		float left = std::max<float>(posArray[0]._x, 0);
-		float top = std::max<float>(posArray[0]._y, 0);
+		float bottom = std::max<float>(posArray[0]._y, 0);
 		float right = std::min<float>(posArray[2]._x, _w);
-		float bottom = std::min<float>(posArray[2]._y, _h);
+		float top = std::min<float>(posArray[2]._y, _h);
 
 		float w = right - left;
-		float h = bottom - top;
+		float h = top - bottom;
 		for (float x = left; x < right; ++x)
 		{
 			BGRA8U color1 = _LerpColor(colorArray[0], colorArray[1], (x - left) / w);
 			BGRA8U color2 = _LerpColor(colorArray[3], colorArray[2], (x - left) / w);
 
-			for (float y = top; y < bottom; ++y)
+			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color = _LerpColor(color1, color2, (y - top) / h);
+				BGRA8U color = _LerpColor(color1, color2, (y - bottom) / h);
 				_SetPix(x, y, color);
 			}
 		}
@@ -271,13 +271,13 @@ namespace Smile
 	void XRaster::DrawImage(float x, float y, float w, float h)
 	{
 		float left = std::max<float>(x, 0);
-		float top = std::max<float>(y, 0);
+		float bottom = std::max<float>(y, 0);
 		float right = std::min<float>(x + w, _w);
-		float bottom = std::min<float>(y + h, _h);
+		float top = std::min<float>(y + h, _h);
 
 		for (float x = left; x < right; ++x)
 		{
-			for (float y = top; y < bottom; ++y)
+			for (float y = bottom; y < top; ++y)
 			{
 				BGRA8U color(rand() % 255, rand() % 255, rand() % 255, rand() %255);
 				_SetPix(x, y, color);
@@ -288,15 +288,15 @@ namespace Smile
 	void XRaster::DrawImage(float x, float y, XImage* pImage)
 	{
 		float left = std::max<float>(x, 0);
-		float top = std::max<float>(y, 0);
+		float bottom = std::max<float>(y, 0);
 		float right = std::min<float>(x + pImage->Width(), _w);
-		float bottom = std::min<float>(y + pImage->Height(), _h);
+		float top = std::min<float>(y + pImage->Height(), _h);
 
 		for (float x = left; x < right; ++x)
 		{
-			for (float y = top; y < bottom; ++y)
+			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color(pImage->Data(x - left, y - top));
+				BGRA8U color(pImage->Data(x - left, y - bottom));
 				_SetPix(x, y, color);
 			}
 		}
