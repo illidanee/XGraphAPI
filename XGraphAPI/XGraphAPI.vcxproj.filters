@@ -21,10 +21,10 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Raster.cpp">
+    <ClCompile Include="Src\XTimer.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\XTimer.cpp">
+    <ClCompile Include="Src\XRaster.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,10 +32,10 @@
     <ClInclude Include="Src\CommonType.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Raster.h">
+    <ClInclude Include="Src\XTimer.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\XTimer.h">
+    <ClInclude Include="Src\XRaster.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>
