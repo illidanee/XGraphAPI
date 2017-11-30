@@ -27,6 +27,9 @@
     <ClCompile Include="Src\XRaster.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\XImage.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CommonType.h">
@@ -36,6 +39,9 @@
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Src\XRaster.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\XImage.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

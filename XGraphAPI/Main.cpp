@@ -4,6 +4,7 @@
 
 #include "./Src/CommonType.h"
 #include "./Src/XTimer.h"
+#include "./Src/XImage.h"
 #include "./Src/XRaster.h"
 
 //Window Size
@@ -72,7 +73,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	HBITMAP hBmp = CreateDIBSection(hMem, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuffer, 0, 0);
 	SelectObject(hMem, hBmp);
 
-	Smile::Timer timer;
+	Smile::XTimer timer;
+	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/lena.bmp");
 
 	//Msg Loop
 	MSG msg = {};
@@ -93,7 +95,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		timer.Begin();
 
 		//Draw Image
-		raster.DrawImage(100, 100, 200, 200);
+		raster.DrawImage(100, 100, pImage);
 
 		//Timer End
 		timer.End();
@@ -104,6 +106,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		//Render to DC
 		BitBlt(hDC, 0, 0, _gWindowWidth, _gWindowHeight, hMem, 0, 0, SRCCOPY);
 	}
+
+	delete pImage;
 
 	return 0;
 }

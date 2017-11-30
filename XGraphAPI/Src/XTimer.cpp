@@ -11,23 +11,23 @@ namespace Smile
 	 *    Brief   : high-performance Timer
 	 *
 	 ****************************************************************************************************************/
-	Timer::Timer()
+	XTimer::XTimer()
 	{
 		QueryPerformanceFrequency(&_frequency);
 		QueryPerformanceCounter(&_startTime);
 	}
 
-	void Timer::Begin()
+	void XTimer::Begin()
 	{
 		QueryPerformanceCounter(&_startTime);
 	}
 
-	void Timer::End()
+	void XTimer::End()
 	{
 		QueryPerformanceCounter(&_endTime);
 	}
 
-	double Timer::GetElapsedTime()
+	double XTimer::GetElapsedTime()
 	{
 		return (_endTime.QuadPart - _startTime.QuadPart) * (1000000.0 / _frequency.QuadPart);
 	}

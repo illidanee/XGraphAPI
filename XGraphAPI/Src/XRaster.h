@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <math.h>
 #include "CommonType.h"
-
+#include "XImage.h"
 
 namespace Smile 
 {
@@ -119,6 +119,7 @@ namespace Smile
 		void DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3);
 		
 		void DrawImage(float x, float y, float w, float h);
+		void DrawImage(float x, float y, XImage* pImage);
 
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)

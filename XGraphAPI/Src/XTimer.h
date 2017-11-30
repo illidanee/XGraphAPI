@@ -4,10 +4,10 @@
 
 namespace Smile
 {
-	class Timer
+	class XTimer
 	{
 	public:
-		Timer();
+		XTimer();
 		void Begin();
 		void End();
 		double GetElapsedTime();

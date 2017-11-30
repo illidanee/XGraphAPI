@@ -13,6 +13,7 @@ namespace Smile
 	public:
 		_BGRA() {}
 		_BGRA(T b, T g, T r, T a) : _b(b), _g(g), _r(r), _a(a) { }
+		_BGRA(unsigned int color) : _color(color) { }
 		union
 		{
 			struct 

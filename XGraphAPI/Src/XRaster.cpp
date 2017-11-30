@@ -284,6 +284,23 @@ namespace Smile
 			}
 		}
 	}
+
+	void XRaster::DrawImage(float x, float y, XImage* pImage)
+	{
+		float left = std::max<float>(x, 0);
+		float top = std::max<float>(y, 0);
+		float right = std::min<float>(x + pImage->Width(), _w);
+		float bottom = std::min<float>(y + pImage->Height(), _h);
+
+		for (float x = left; x < right; ++x)
+		{
+			for (float y = top; y < bottom; ++y)
+			{
+				BGRA8U color(pImage->Data(x - left, y - top));
+				_SetPix(x, y, color);
+			}
+		}
+	}
 	
 	void XRaster::_DrawSpan(const SpanParam& span)
 	{
