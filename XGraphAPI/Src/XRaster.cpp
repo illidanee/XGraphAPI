@@ -319,6 +319,24 @@ namespace Smile
 			}
 		}
 	}
+
+	void XRaster::DrawImageWithAlphaTest(float x, float y, XImage* pImage, unsigned char alpha)
+	{
+		float left = std::max<float>(x, 0);
+		float bottom = std::max<float>(y, 0);
+		float right = std::min<float>(x + pImage->Width(), _w);
+		float top = std::min<float>(y + pImage->Height(), _h);
+
+		for (float x = left; x < right; ++x)
+		{
+			for (float y = bottom; y < top; ++y)
+			{
+				BGRA8U color(pImage->Data(x - left, y - bottom));
+				if (color._a > alpha)
+					_SetPix(x, y, color);
+			}
+		}
+	}
 	
 	void XRaster::_DrawSpan(const SpanParam& span)
 	{

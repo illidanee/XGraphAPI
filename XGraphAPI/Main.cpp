@@ -97,7 +97,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Image
 		raster.DrawImage(0, 0, pImage);
-		raster.DrawImageWithColorKey(200, 200, pImageTrain, Smile::BGRA8U(67, 45, 178, 255));
+		raster.DrawImageWithColorKey(100, 200, pImageTrain, Smile::BGRA8U(67, 45, 178, 255));
+		raster.DrawImageWithAlphaTest(600, 200, pImageTrain, 100);
 
 		//Timer End
 		timer.End();
