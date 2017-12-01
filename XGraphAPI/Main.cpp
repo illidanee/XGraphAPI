@@ -74,7 +74,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	SelectObject(hMem, hBmp);
 
 	Smile::XTimer timer;
-	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/lena.bmp");
+	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/bg.png");
+	Smile::XImage* pImageTrain = Smile::XImage::LoadFromFile("../Resources/train.png");
 
 	//Msg Loop
 	MSG msg = {};
@@ -95,8 +96,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		timer.Begin();
 
 		//Draw Image
-		raster.DrawImage(100, 100, pImage);
-		raster.DrawPoint(50, 50, Smile::BGRA8U(255, 255, 0, 255), Smile::XRaster::_MAXSIZE);
+		raster.DrawImage(0, 0, pImage);
+		raster.DrawImageWithColorKey(200, 200, pImageTrain, Smile::BGRA8U(67, 45, 178, 255));
 
 		//Timer End
 		timer.End();

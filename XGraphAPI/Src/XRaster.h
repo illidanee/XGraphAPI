@@ -120,6 +120,7 @@ namespace Smile
 		
 		void DrawImage(float x, float y, float w, float h);
 		void DrawImage(float x, float y, XImage* pImage);
+		void DrawImageWithColorKey(float x, float y, XImage* pImage, BGRA8U colorKey);
 
 	private:
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)
