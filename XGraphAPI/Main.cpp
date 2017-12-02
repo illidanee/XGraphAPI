@@ -74,8 +74,9 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	SelectObject(hMem, hBmp);
 
 	Smile::XTimer timer;
-	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/bg.png");
+	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/bgWhite.png");
 	Smile::XImage* pImageTrain = Smile::XImage::LoadFromFile("../Resources/train.png");
+	Smile::XImage* pImageGrass = Smile::XImage::LoadFromFile("../Resources/grass.png");
 
 	//Msg Loop
 	MSG msg = {};
@@ -97,8 +98,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Image
 		raster.DrawImage(0, 0, pImage);
-		raster.DrawImageWithColorKey(100, 200, pImageTrain, Smile::BGRA8U(67, 45, 178, 255));
-		raster.DrawImageWithAlphaTest(600, 200, pImageTrain, 100);
+		raster.DrawImageWithAlphaTest(200, 200, pImageGrass, 100);
+		raster.DrawImageWithAlphaBlend(400, 200, pImageGrass);
 
 		//Timer End
 		timer.End();

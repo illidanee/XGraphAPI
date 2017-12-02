@@ -122,8 +122,14 @@ namespace Smile
 		void DrawImage(float x, float y, XImage* pImage);
 		void DrawImageWithColorKey(float x, float y, XImage* pImage, BGRA8U colorKey);
 		void DrawImageWithAlphaTest(float x, float y, XImage* pImage, unsigned char alpha);
+		void DrawImageWithAlphaBlend(float x, float y, XImage* pImage);
 
 	private:
+		inline BGRA8U _GetPix(unsigned int x, unsigned int y)
+		{
+			return _pBuffer[y * _w + x];
+		}
+
 		inline void _SetPix(unsigned int x, unsigned int y, BGRA8U color)
 		{
 			_pBuffer[y * _w + x] = color._color;
