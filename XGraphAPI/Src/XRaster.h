@@ -125,6 +125,7 @@ namespace Smile
 		void DrawImageWithAlphaBlend(float x, float y, XImage* pImage);
 		void DrawImageWithAlphaBlendAndTransparent(float x, float y, XImage* pImage, float alpha);
 		void DrawImageWithTransparent(float x, float y, XImage* pImage, float alpha);
+		void DrawImageWithSize(float x, float y, XImage* pImage, float imageX, float imageY, float imageWidth, float imageHeight);
 
 	private:
 		inline BGRA8U _GetPix(unsigned int x, unsigned int y)

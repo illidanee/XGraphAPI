@@ -98,10 +98,11 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Image
 		raster.DrawImage(0, 0, pImage);
-		raster.DrawImageWithAlphaTest(200, 200, pImageGrass, 100);
-		raster.DrawImageWithAlphaBlend(400, 200, pImageGrass);
-		raster.DrawImageWithAlphaBlendAndTransparent(600, 200, pImageGrass, 0.3f);
-		raster.DrawImageWithTransparent(800, 200, pImageGrass, 0.3f);
+		raster.DrawImageWithAlphaTest(100, 200, pImageGrass, 100);
+		raster.DrawImageWithAlphaBlend(300, 200, pImageGrass);
+		raster.DrawImageWithAlphaBlendAndTransparent(500, 200, pImageGrass, 0.3f);
+		raster.DrawImageWithTransparent(700, 200, pImageGrass, 0.3f);
+		raster.DrawImageWithSize(900, 200, pImageGrass, 32, 32, 64, 64);
 
 		//Timer End
 		timer.End();
@@ -114,6 +115,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	}
 
 	delete pImage;
+	delete pImageTrain;
+	delete pImageGrass;
 
 	return 0;
 }
