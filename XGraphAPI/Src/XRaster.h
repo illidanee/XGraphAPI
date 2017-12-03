@@ -123,6 +123,8 @@ namespace Smile
 		void DrawImageWithColorKey(float x, float y, XImage* pImage, BGRA8U colorKey);
 		void DrawImageWithAlphaTest(float x, float y, XImage* pImage, unsigned char alpha);
 		void DrawImageWithAlphaBlend(float x, float y, XImage* pImage);
+		void DrawImageWithAlphaBlendAndTransparent(float x, float y, XImage* pImage, float alpha);
+		void DrawImageWithTransparent(float x, float y, XImage* pImage, float alpha);
 
 	private:
 		inline BGRA8U _GetPix(unsigned int x, unsigned int y)

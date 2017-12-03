@@ -100,6 +100,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		raster.DrawImage(0, 0, pImage);
 		raster.DrawImageWithAlphaTest(200, 200, pImageGrass, 100);
 		raster.DrawImageWithAlphaBlend(400, 200, pImageGrass);
+		raster.DrawImageWithAlphaBlendAndTransparent(600, 200, pImageGrass, 0.3f);
+		raster.DrawImageWithTransparent(800, 200, pImageGrass, 0.3f);
 
 		//Timer End
 		timer.End();

@@ -357,6 +357,44 @@ namespace Smile
 		}
 	}
 
+	void XRaster::DrawImageWithAlphaBlendAndTransparent(float x, float y, XImage* pImage, float alpha)
+	{
+		float left = std::max<float>(x, 0);
+		float bottom = std::max<float>(y, 0);
+		float right = std::min<float>(x + pImage->Width(), _w);
+		float top = std::min<float>(y + pImage->Height(), _h);
+
+		for (float x = left; x < right; ++x)
+		{
+			for (float y = bottom; y < top; ++y)
+			{
+				BGRA8U srcColor(pImage->Data(x - left, y - bottom));
+				BGRA8U desColor = _GetPix(x, y);
+				BGRA8U color = _LerpColor(desColor, srcColor, srcColor._a / 255.0f * alpha);
+				_SetPix(x, y, color);
+			}
+		}
+	}
+
+	void XRaster::DrawImageWithTransparent(float x, float y, XImage* pImage, float alpha)
+	{
+		float left = std::max<float>(x, 0);
+		float bottom = std::max<float>(y, 0);
+		float right = std::min<float>(x + pImage->Width(), _w);
+		float top = std::min<float>(y + pImage->Height(), _h);
+
+		for (float x = left; x < right; ++x)
+		{
+			for (float y = bottom; y < top; ++y)
+			{
+				BGRA8U srcColor(pImage->Data(x - left, y - bottom));
+				BGRA8U desColor = _GetPix(x, y);
+				BGRA8U color = _LerpColor(desColor, srcColor, alpha);
+				_SetPix(x, y, color);
+			}
+		}
+	}
+
 	void XRaster::_DrawSpan(const SpanParam& span)
 	{
 		//计算标准步长偏移
