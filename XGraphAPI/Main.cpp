@@ -104,6 +104,9 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		raster.DrawImageWithTransparent(700, 200, pImageGrass, 0.3f);
 		raster.DrawImageWithSize(900, 200, pImageGrass, 32, 32, 64, 64);
 
+		raster.DrawImageWithScale(100, 400, 32, 32, pImageGrass);
+		raster.DrawImageWithScale(300, 400, 256, 256, pImageGrass);
+
 		//Timer End
 		timer.End();
 		char timeBuffer[256] = {0};

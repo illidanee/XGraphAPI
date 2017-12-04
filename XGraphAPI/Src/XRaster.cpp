@@ -415,6 +415,29 @@ namespace Smile
 		}
 	}
 
+	void XRaster::DrawImageWithScale(float x, float y, float w, float h, XImage* pImage)
+	{
+		if (w == 0 || h == 0)
+			return;
+
+		float xScale = pImage->Width() / w;
+		float yScale = pImage->Height() / h;
+
+		float left = std::max<float>(x, 0);
+		float bottom = std::max<float>(y, 0);
+		float right = std::min<float>(x + w, _w);
+		float top = std::min<float>(y + h, _h);
+
+		for (float x = left; x < right; ++x)
+		{
+			for (float y = bottom; y < top; ++y)
+			{
+				BGRA8U color(pImage->Data((x - left) * xScale, (y - bottom) * yScale));
+				_SetPix(x, y, color);
+			}
+		}
+	}
+
 	void XRaster::_DrawSpan(const SpanParam& span)
 	{
 		//计算标准步长偏移
