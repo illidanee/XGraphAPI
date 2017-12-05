@@ -454,9 +454,11 @@ namespace Smile
 		for (float x = startX; x < endX; ++x)
 		{
 			Vec2f uv = _LerpUV(span._startUV, span._endUV, scale);
-			//BGRA8U color = _LerpColor(span._startColor, span._endColor, scale);
+			BGRA8U colorUV = pImage->DataUV(uv._u, uv._v);
 
-			BGRA8U color = pImage->DataUV(uv._u, uv._v);
+			BGRA8U colorXY = _LerpColor(span._startColor, span._endColor, scale);
+
+			BGRA8U color = colorUV + colorXY;
 
 			_SetPix(x, span._start._y, color);
 

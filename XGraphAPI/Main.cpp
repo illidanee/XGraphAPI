@@ -118,15 +118,15 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{
 			Smile::Vec2f(300, 300),
 			Smile::Vec2f(0.0f, 0.0f),
-			Smile::BGRA8U(0, 0, 0, 0),
+			Smile::BGRA8U(0, 0, 255, 0),
 
 			Smile::Vec2f(812, 812),
 			Smile::Vec2f(1.0f, 1.0f),
-			Smile::BGRA8U(0, 0, 0, 0),
+			Smile::BGRA8U(0, 0, 255, 0),
 
 			Smile::Vec2f(300, 812),
 			Smile::Vec2f(0.0f, 1.0f),
-			Smile::BGRA8U(0, 0, 0, 0),
+			Smile::BGRA8U(0, 0, 255, 0),
 		};
 
 		raster.DrawTriangle(triangle1, pImageGrass);
