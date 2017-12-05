@@ -98,14 +98,39 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Image
 		raster.DrawImage(0, 0, pImage);
-		raster.DrawImageWithAlphaTest(100, 200, pImageGrass, 100);
-		raster.DrawImageWithAlphaBlend(300, 200, pImageGrass);
-		raster.DrawImageWithAlphaBlendAndTransparent(500, 200, pImageGrass, 0.3f);
-		raster.DrawImageWithTransparent(700, 200, pImageGrass, 0.3f);
-		raster.DrawImageWithSize(900, 200, pImageGrass, 32, 32, 64, 64);
+		
+		Smile::XRaster::TriangleParam triangle1 =
+		{
+			Smile::Vec2f(300, 300),
+			Smile::Vec2f(0.0f, 0.0f),
+			Smile::BGRA8U(0, 0, 0, 0),
 
-		raster.DrawImageWithScale(100, 400, 32, 32, pImageGrass);
-		raster.DrawImageWithScale(300, 400, 256, 256, pImageGrass);
+			Smile::Vec2f(800, 300),
+			Smile::Vec2f(1.0f, 0.0f),
+			Smile::BGRA8U(0, 0, 0, 0),
+
+			Smile::Vec2f(800, 800),
+			Smile::Vec2f(1.0f, 1.0f),
+			Smile::BGRA8U(0, 0, 0, 0),
+		};
+
+		Smile::XRaster::TriangleParam triangle2 =
+		{
+			Smile::Vec2f(300, 300),
+			Smile::Vec2f(0.0f, 0.0f),
+			Smile::BGRA8U(0, 0, 0, 0),
+
+			Smile::Vec2f(800, 800),
+			Smile::Vec2f(1.0f, 1.0f),
+			Smile::BGRA8U(0, 0, 0, 0),
+
+			Smile::Vec2f(300, 800),
+			Smile::Vec2f(0.0f, 1.0f),
+			Smile::BGRA8U(0, 0, 0, 0),
+		};
+
+		raster.DrawTriangle(triangle1, pImageGrass);
+		raster.DrawTriangle(triangle2, pImageGrass);
 
 		//Timer End
 		timer.End();

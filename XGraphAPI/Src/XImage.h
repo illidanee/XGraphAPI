@@ -15,7 +15,8 @@ namespace Smile
 		
 		unsigned int Width() const { return _w; }
 		unsigned int Height() const { return _h; }
-		unsigned int Data(unsigned int x, unsigned int y) const { return _pBuffer[y * _w + x]; }
+		unsigned int DataXY(unsigned int x, unsigned int y) const { return _pBuffer[y * _w + x]; }
+		unsigned int DataUV(float u, float v);
 
 	private:
 		unsigned int* _pBuffer;

@@ -38,4 +38,11 @@ namespace Smile
 	{
 		delete[] _pBuffer;
 	}
+
+	unsigned int XImage::DataUV(float u, float v)
+	{
+		float x = u * _w;
+		float y = v * _h;
+		return DataXY(x, y);
+	}
 }

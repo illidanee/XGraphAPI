@@ -39,30 +39,35 @@ namespace Smile
 		class _SpanParam
 		{
 		public:
-			float _xStart;
-			BGRA8U _xStartColor;
-			float _xEndl;
-			BGRA8U _xEndColor;
-			float _y;
+			Vec2f _start;
+			Vec2f _startUV;
+			BGRA8U _startColor;
+			Vec2f _end;
+			Vec2f _endUV;
+			BGRA8U _endColor;
 			
 		public:
-			_SpanParam(float xStart, BGRA8U xStartColor, float xEnd, BGRA8U xEndColor, float y)
+			_SpanParam(Vec2f start, Vec2f startUV, BGRA8U startColor, Vec2f end, Vec2f endUV, BGRA8U endColor)
 			{
-				if (xStart <= xEnd)
+				if (start._x <= end._x)
 				{
-					_xStart = xStart;
-					_xStartColor = xStartColor;
-					_xEndl = xEnd;
-					_xEndColor = xEndColor;
-					_y = y;
+					_start = start;
+					_startUV = startUV;
+					_startColor = startColor;
+
+					_end = end;
+					_endUV = endUV;
+					_endColor = endColor;
 				}
 				else
 				{
-					_xStart = xEnd;
-					_xStartColor = xEndColor;
-					_xEndl = xStart;
-					_xEndColor = xStartColor;
-					_y = y;
+					_start = end;
+					_startUV = endUV;
+					_startColor = endColor;
+
+					_end = start;
+					_endUV = startUV;
+					_endColor = startColor;
 				}
 			}
 		};
@@ -72,37 +77,76 @@ namespace Smile
 		class _EdgeParam
 		{
 		public:
-			float _x1;
-			float _y1;
+			Vec2f _pos1;
+			Vec2f _uv1;
 			BGRA8U _color1;
-			float _x2;
-			float _y2;
+
+			Vec2f _pos2;
+			Vec2f _uv2;
 			BGRA8U _color2;
+
 		public:
-			_EdgeParam(float x1, float y1, BGRA8U color1, float x2, float y2, BGRA8U color2)
+			_EdgeParam(Vec2f pos1, Vec2f uv1, BGRA8U color1, Vec2f pos2, Vec2f uv2, BGRA8U color2)
 			{
-				if (y1 <= y2)
+				if (pos1._y <= pos2._y)
 				{
-					_x1 = x1;
-					_y1 = y1;
+					_pos1 = pos1;
+					_uv1 = uv1;
 					_color1 = color1;
-					_x2 = x2;
-					_y2 = y2;
+
+					_pos2 = pos2;
+					_uv2 = uv2;
 					_color2 = color2;
 				}
 				else
 				{
-					_x1 = x2;
-					_y1 = y2;
+					_pos1 = pos2;
+					_uv1 = uv2;
 					_color1 = color2;
-					_x2 = x1;
-					_y2 = y1;
+
+					_pos2 = pos1;
+					_uv2 = uv1;
 					_color2 = color1;
 				}
 			}
 		};
 
 		typedef _EdgeParam EdgeParam;
+		
+	public:
+		class _TriangleParam
+		{
+		public:
+			Vec2f _pos1;
+			Vec2f _uv1;
+			BGRA8U _color1;
+
+			Vec2f _pos2;
+			Vec2f _uv2;
+			BGRA8U _color2;
+
+			Vec2f _pos3;
+			Vec2f _uv3;
+			BGRA8U _color3;
+
+		public:
+			_TriangleParam(Vec2f pos1, Vec2f uv1, BGRA8U color1, Vec2f pos2, Vec2f uv2, BGRA8U color2, Vec2f pos3, Vec2f uv3, BGRA8U color3)
+			{
+				_pos1 = pos1;
+				_uv1 = uv1;
+				_color1 = color1;
+
+				_pos2 = pos2;
+				_uv2 = uv2;
+				_color2 = color2;
+
+				_pos3 = pos3;
+				_uv3 = uv3;
+				_color3 = color3;
+			}
+		};
+
+		typedef _TriangleParam TriangleParam;
 
 	public:
 		XRaster(void* pBuffer, unsigned int w, unsigned int h);
@@ -116,8 +160,8 @@ namespace Smile
 		void DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len);
 		void DrawSolidRect(float x, float y, float w, float h, BGRA8U color);
 		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
-		void DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3);
-		
+		void DrawTriangle(const TriangleParam& triangle, XImage* pImage);
+
 		void DrawImage(float x, float y, float w, float h);
 		void DrawImage(float x, float y, XImage* pImage);
 		void DrawImageWithColorKey(float x, float y, XImage* pImage, BGRA8U colorKey);
@@ -157,8 +201,16 @@ namespace Smile
 			return color;
 		}
 
-		void _DrawSpan(const SpanParam& spanParam);
-		void _DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2);
+		inline Vec2f _LerpUV(Vec2f uv1, Vec2f uv2, float lerp)
+		{
+			Vec2f uv(0, 0);
+			uv._u = uv1._u + (uv2._u - uv1._u) * lerp;
+			uv._v = uv1._v + (uv2._v - uv1._v) * lerp;
+			return uv;
+		}
+
+		void _DrawSpan(const SpanParam& spanParam, XImage* pImage);
+		void _DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2, XImage* pImage);
 
 	private:
 		BGRA8U BGRA8U_RED;

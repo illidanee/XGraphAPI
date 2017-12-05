@@ -36,8 +36,19 @@ namespace Smile
 	public:
 		_Vector2() {}
 		_Vector2(T x, T y) : _x(x), _y(y) {}
-		T _x;
-		T _y;
+		union
+		{
+			struct  
+			{
+				T _x;
+				T _y;
+			};
+			struct
+			{
+				T _u;
+				T _v;
+			};
+		};
 	};
 
 	typedef _Vector2<float> Vec2f;
@@ -49,9 +60,21 @@ namespace Smile
 	public:
 		_Vector3() {}
 		_Vector3(T x, T y, T z) : _x(x), _y(y), _z(z) {}
-		T _x;
-		T _y;
-		T _z;
+		union
+		{
+			struct  
+			{
+				T _x;
+				T _y;
+				T _z;
+			};
+			struct
+			{
+				T _s;
+				T _t;
+				T _r;
+			};
+		};
 	};
 
 	typedef _Vector3<float> Vec3f;

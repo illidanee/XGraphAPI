@@ -241,19 +241,19 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawTriangle(Vec2f pos1, BGRA8U color1, Vec2f pos2, BGRA8U color2, Vec2f pos3, BGRA8U color3)
+	void XRaster::DrawTriangle(const TriangleParam& triangle, XImage* pImage)
 	{
 		EdgeParam edges[3] = { 
-			EdgeParam(pos1._x, pos1._y, color1, pos2._x, pos2._y, color2), 
-			EdgeParam(pos2._x, pos2._y, color2, pos3._x, pos3._y, color3),
-			EdgeParam(pos3._x, pos3._y, color3, pos1._x, pos1._y, color1) };
+			EdgeParam(triangle._pos1, triangle._uv1, triangle._color1, triangle._pos2, triangle._uv2, triangle._color2),
+			EdgeParam(triangle._pos2, triangle._uv2, triangle._color2, triangle._pos3, triangle._uv3, triangle._color3),
+			EdgeParam(triangle._pos3, triangle._uv3, triangle._color3, triangle._pos1, triangle._uv1, triangle._color1) };
 
 		int maxIndex = 0;
-		float maxLength = edges[0]._y2 - edges[0]._y1;
+		float maxLength = edges[0]._pos2._y - edges[0]._pos1._y;
 
 		for (int i = 0; i < 3; ++i)
 		{
-			float lenth = edges[i]._y2 - edges[i]._y1;
+			float lenth = edges[i]._pos2._y - edges[i]._pos1._y;
 			if (lenth > maxLength)
 			{
 				maxIndex = i;
@@ -264,9 +264,9 @@ namespace Smile
 		int minIndex1 = (maxIndex + 1) % 3;
 		int minIndex2 = (maxIndex + 2) % 3;
 
-		_DrawTrianglePart(edges[maxIndex], edges[minIndex1]);
-		_DrawTrianglePart(edges[maxIndex], edges[minIndex2]);
-	}	
+		_DrawTrianglePart(edges[maxIndex], edges[minIndex1], pImage);
+		_DrawTrianglePart(edges[maxIndex], edges[minIndex2], pImage);
+	}
 
 	void XRaster::DrawImage(float x, float y, float w, float h)
 	{
@@ -296,7 +296,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color(pImage->Data(x - left, y - bottom));
+				BGRA8U color(pImage->DataXY(x - left, y - bottom));
 				_SetPix(x, y, color);
 			}
 		}
@@ -313,7 +313,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color(pImage->Data(x - left, y - bottom));
+				BGRA8U color(pImage->DataXY(x - left, y - bottom));
 				if (color._color != colorKey._color)
 					_SetPix(x, y, color);
 			}
@@ -331,7 +331,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color(pImage->Data(x - left, y - bottom));
+				BGRA8U color(pImage->DataXY(x - left, y - bottom));
 				if (color._a > alpha)
 					_SetPix(x, y, color);
 			}
@@ -349,7 +349,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U srcColor(pImage->Data(x - left, y - bottom));
+				BGRA8U srcColor(pImage->DataXY(x - left, y - bottom));
 				BGRA8U desColor = _GetPix(x, y);
 				BGRA8U color = _LerpColor(desColor, srcColor, srcColor._a / 255.0f);
 				_SetPix(x, y, color);
@@ -368,7 +368,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U srcColor(pImage->Data(x - left, y - bottom));
+				BGRA8U srcColor(pImage->DataXY(x - left, y - bottom));
 				BGRA8U desColor = _GetPix(x, y);
 				BGRA8U color = _LerpColor(desColor, srcColor, srcColor._a / 255.0f * alpha);
 				_SetPix(x, y, color);
@@ -387,7 +387,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U srcColor(pImage->Data(x - left, y - bottom));
+				BGRA8U srcColor(pImage->DataXY(x - left, y - bottom));
 				BGRA8U desColor = _GetPix(x, y);
 				BGRA8U color = _LerpColor(desColor, srcColor, alpha);
 				_SetPix(x, y, color);
@@ -409,7 +409,7 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color(pImage->Data(x - left + imageX, y - bottom + imageY));
+				BGRA8U color(pImage->DataXY(x - left + imageX, y - bottom + imageY));
 				_SetPix(x, y, color);
 			}
 		}
@@ -432,40 +432,43 @@ namespace Smile
 		{
 			for (float y = bottom; y < top; ++y)
 			{
-				BGRA8U color(pImage->Data((x - left) * xScale, (y - bottom) * yScale));
+				BGRA8U color(pImage->DataXY((x - left) * xScale, (y - bottom) * yScale));
 				_SetPix(x, y, color);
 			}
 		}
 	}
 
-	void XRaster::_DrawSpan(const SpanParam& span)
+	void XRaster::_DrawSpan(const SpanParam& span, XImage* pImage)
 	{
 		//计算标准步长偏移
-		float offset = span._xEndl - span._xStart;
+		float offset = span._end._x - span._start._x;
 		float step = 1.0f / offset;
 		float scale = 0.0f;
 
 		//优化x方向
-		float startX = std::max<float>(span._xStart, 0);
-		float endX = std::min<float>(span._xEndl, _w);
-		scale += (startX - span._xStart) / offset;
+		float startX = std::max<float>(span._start._x, 0);
+		float endX = std::min<float>(span._end._x, _w);
+		scale += (startX - span._start._x) / offset;
 
 		//for (float x = span._xStart; x < span._xEndl; ++x)
 		for (float x = startX; x < endX; ++x)
 		{
-			BGRA8U color = _LerpColor(span._xStartColor, span._xEndColor, scale);
+			Vec2f uv = _LerpUV(span._startUV, span._endUV, scale);
+			//BGRA8U color = _LerpColor(span._startColor, span._endColor, scale);
 
-			_SetPix(x, span._y, color);
+			BGRA8U color = pImage->DataUV(uv._u, uv._v);
+
+			_SetPix(x, span._start._y, color);
 
 			scale += step;
 		}
 	}
 
-	void XRaster::_DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2)
+	void XRaster::_DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2, XImage* pImage)
 	{
 		//先计算e2 - 计算标准步长偏移
-		float xOffset2 = e2._x2 - e2._x1;
-		float yOffset2 = e2._y2 - e2._y1;
+		float xOffset2 = e2._pos2._x - e2._pos1._x;
+		float yOffset2 = e2._pos2._y - e2._pos1._y;
 		if (yOffset2 == 0)
 		{
 			return;
@@ -474,34 +477,37 @@ namespace Smile
 		float scale2 = 0;
 
 		//优化Y方向
-		float startY2 = std::max<float>(e2._y1, 0);
-		float endY2 = std::min<float>(e2._y2, _h);
-		scale2 = (startY2 - e2._y1) / yOffset2;
+		float startY2 = std::max<float>(e2._pos1._y, 0);
+		float endY2 = std::min<float>(e2._pos2._y, _h);
+		scale2 = (startY2 - e2._pos1._y) / yOffset2;
 
 		//在计算e1 - 计算标准步长偏移
-		float xOffset1 = e1._x2 - e1._x1;
-		float yOffset1 = e1._y2 - e1._y1;
+		float xOffset1 = e1._pos2._x - e1._pos1._x;
+		float yOffset1 = e1._pos2._y - e1._pos1._y;
 		if (yOffset1 == 0)
 		{
 			return;
 		}
 		float step1 = 1.0f / yOffset1;
-		float scale1 = (e2._y1 - e1._y1) / yOffset1;
+		float scale1 = (e2._pos1._y - e1._pos1._y) / yOffset1;
 
 		//优化Y方向 - 使用 startY2 计算。
-		scale1 = (startY2 - e1._y1) / yOffset1;
+		scale1 = (startY2 - e1._pos1._y) / yOffset1;
 
 		//for (float y = e2._y1; y < e2._y2; ++y)
 		for (float y = startY2; y < endY2; ++y)
 		{
-			float x1 = e1._x1 + xOffset1 * scale1;
-			float x2 = e2._x1 + xOffset2 * scale2;
+			Vec2f pos1(e1._pos1._x + xOffset1 * scale1, y);
+			Vec2f pos2(e2._pos1._x + xOffset2 * scale2, y);
+
+			Vec2f uv1 = _LerpUV(e1._uv1, e1._uv2, scale1);
+			Vec2f uv2 = _LerpUV(e2._uv1, e2._uv2, scale2);
 
 			BGRA8U color1 = _LerpColor(e1._color1, e1._color2, scale1);
 			BGRA8U color2 = _LerpColor(e2._color1, e2._color2, scale2);
 
-			SpanParam span(x1, color1, x2, color2, y);
-			_DrawSpan(span);
+			SpanParam span(pos1, uv1, color1, pos2, uv2, color2);
+			_DrawSpan(span, pImage);
 
 			scale1 += step1;
 			scale2 += step2;
