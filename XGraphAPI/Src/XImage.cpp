@@ -43,6 +43,6 @@ namespace Smile
 	{
 		float x = u * _w;
 		float y = v * _h;
-		return DataXY(x, y);
+		return DataXY((unsigned int)x % _w, (unsigned int)y % _h);
 	}
 }

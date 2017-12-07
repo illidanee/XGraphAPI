@@ -87,12 +87,12 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	DATA data[] = { 
 		{ Smile::Vec2f(100, 100), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(612, 100), Smile::Vec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(612, 612), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(612, 100), Smile::Vec2f(2.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(612, 612), Smile::Vec2f(2.0f, 2.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
 		{ Smile::Vec2f(100, 100), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(100, 612), Smile::Vec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(612, 612), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(100, 612), Smile::Vec2f(0.0f, 2.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(612, 612), Smile::Vec2f(2.0f, 2.0f), Smile::BGRA8U(0, 0, 0, 0) },
 	};
 
 	//Msg Loop
