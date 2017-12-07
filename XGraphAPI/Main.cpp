@@ -76,6 +76,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	Smile::XTimer timer;
 	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/bgWhite.png");
 	Smile::XImage* pImageTrain = Smile::XImage::LoadFromFile("../Resources/train.png");
+	pImageTrain->SetWrapType(Smile::XImage::_WT_EDGE);
 	Smile::XImage* pImageGrass = Smile::XImage::LoadFromFile("../Resources/grass.png");
 
 	struct DATA 

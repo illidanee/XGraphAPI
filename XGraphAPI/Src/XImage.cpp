@@ -32,6 +32,8 @@ namespace Smile
 		_w = w;
 		_h = h;
 		memcpy(_pBuffer, pBuffer, w * h * sizeof(unsigned int));
+
+		_wrapType = _WT_REPEAT;
 	}
 
 	XImage::~XImage()
@@ -43,6 +45,21 @@ namespace Smile
 	{
 		float x = u * _w;
 		float y = v * _h;
-		return DataXY((unsigned int)x % _w, (unsigned int)y % _h);
+		switch (_wrapType)
+		{
+		case _WT_EDGE:
+			if (x >= _w)
+				x = _w - 1.0f;
+			if (x < 0.0f)
+				x = 0.0f;
+			if (y >= _h)
+				y = _h - 1.0f;
+			if (y < 0.0f)
+				y = 0.0f;
+			return DataXY(x, y);
+		case _WT_REPEAT:
+		default:
+			return DataXY((unsigned int)x % _w, (unsigned int)y % _h);
+		}
 	}
 }
