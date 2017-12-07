@@ -12,6 +12,22 @@ namespace Smile
 		_pBuffer = (unsigned int*)pBuffer;
 		_w = w;
 		_h = h;
+
+		memset(&_vertex, 0, sizeof(_vertex));
+		memset(&_uv, 0, sizeof(_uv));
+		memset(&_color, 0, sizeof(_color));
+
+		_uvDefault._size = 2;
+		_uvDefault._type = _DT_FLOAT;
+		_uvDefault._stride = sizeof(Vec2f);
+		_uvDefault._pData = _defaultUVArray;
+
+		_colorDefault._size = 4;
+		_colorDefault._type = _DT_FLOAT;
+		_colorDefault._stride = sizeof(BGRA8U);
+		_colorDefault._pData = _defaultColorArray;
+
+		_pImage = 0;
 	}
 
 	XRaster::~XRaster()
@@ -241,33 +257,6 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawTriangle(const TriangleParam& triangle, XImage* pImage)
-	{
-		EdgeParam edges[3] = { 
-			EdgeParam(triangle._pos1, triangle._uv1, triangle._color1, triangle._pos2, triangle._uv2, triangle._color2),
-			EdgeParam(triangle._pos2, triangle._uv2, triangle._color2, triangle._pos3, triangle._uv3, triangle._color3),
-			EdgeParam(triangle._pos3, triangle._uv3, triangle._color3, triangle._pos1, triangle._uv1, triangle._color1) };
-
-		int maxIndex = 0;
-		float maxLength = edges[0]._pos2._y - edges[0]._pos1._y;
-
-		for (int i = 0; i < 3; ++i)
-		{
-			float lenth = edges[i]._pos2._y - edges[i]._pos1._y;
-			if (lenth > maxLength)
-			{
-				maxIndex = i;
-				maxLength = lenth;
-			}
-		}
-
-		int minIndex1 = (maxIndex + 1) % 3;
-		int minIndex2 = (maxIndex + 2) % 3;
-
-		_DrawTrianglePart(edges[maxIndex], edges[minIndex1], pImage);
-		_DrawTrianglePart(edges[maxIndex], edges[minIndex2], pImage);
-	}
-
 	void XRaster::DrawImage(float x, float y, float w, float h)
 	{
 		float left = std::max<float>(x, 0);
@@ -438,6 +427,125 @@ namespace Smile
 		}
 	}
 
+	void XRaster::VertexPointer(int size, DATATYPE type, int stride, void* pData)
+	{
+		_vertex._size = size;
+		_vertex._type = type;
+		_vertex._stride = stride;
+		_vertex._pData = pData;
+	}
+
+	void XRaster::UVPointer(int size, DATATYPE type, int stride, void* pData)
+	{
+		_uv._size = size;
+		_uv._type = type;
+		_uv._stride = stride;
+		_uv._pData = pData;
+	}
+
+	void XRaster::ColorPointer(int size, DATATYPE type, int stride, void* pData)
+	{
+		_color._size = size;
+		_color._type = type;
+		_color._stride = stride;
+		_color._pData = pData;
+	}
+
+	void XRaster::BindTexture(XImage* pImage)
+	{
+		_pImage = pImage;
+	}
+
+	void XRaster::DrawArray(DRAWMODE drawMode, int start, int end)
+	{
+		if (_vertex._pData == 0)
+		{
+			return;
+		}
+
+		Element uvTemp = _uv;
+		if (_uv._pData == 0)
+		{
+			uvTemp = _uvDefault;
+		}
+
+		Element colorTemp = _color;
+		if (_color._pData == 0)
+		{
+			colorTemp = _colorDefault;
+		}
+
+		char* pPosData = (char*)_vertex._pData;
+		char* pUVData = (char*)uvTemp._pData;
+		char* pColorData = (char*)colorTemp._pData;
+
+		end = end / 3 * 3;
+		for (int i = start; i < end; i += 3)
+		{
+			//Vertex
+			//char* pPosData = (char*)_vertex._pData;
+			float* pPos = (float*)pPosData;
+			Vec2f pos1(pPos[0], pPos[1]);
+			pPosData += _vertex._stride;
+			pPos = (float*)pPosData;
+			Vec2f pos2(pPos[0], pPos[1]);
+			pPosData += _vertex._stride;
+			pPos = (float*)pPosData;
+			Vec2f pos3(pPos[0], pPos[1]);
+
+			//UV
+			float* pUV = (float*)pUVData;
+			Vec2f uv1(pUV[0], pUV[1]);
+			pUVData += uvTemp._stride;
+			pUV = (float*)pUVData;
+			Vec2f uv2(pUV[0], pUV[1]);
+			pUVData += uvTemp._stride;
+			pUV = (float*)pUVData;
+			Vec2f uv3(pUV[0], pUV[1]);
+
+			//Color
+			BGRA8U* pColor = (BGRA8U*)pColorData;
+			BGRA8U color1(pColor[0]);
+			pColorData += colorTemp._stride;
+			pColor = (BGRA8U*)pColorData;
+			BGRA8U color2(pColor[0]);
+			pColorData += colorTemp._stride;
+			pColor = (BGRA8U*)pColorData;
+			BGRA8U color3(pColor[0]);
+
+			EdgeParam edges[3] = {
+				EdgeParam(pos1, uv1, color1, pos2, uv2, color2),
+				EdgeParam(pos2, uv2, color2, pos3, uv3, color3),
+				EdgeParam(pos3, uv3, color3, pos1, uv1, color1) 
+			};
+
+			int maxIndex = 0;
+			float maxLength = edges[0]._pos2._y - edges[0]._pos1._y;
+
+			for (int i = 0; i < 3; ++i)
+			{
+				float lenth = edges[i]._pos2._y - edges[i]._pos1._y;
+				if (lenth > maxLength)
+				{
+					maxIndex = i;
+					maxLength = lenth;
+				}
+			}
+
+			int minIndex1 = (maxIndex + 1) % 3;
+			int minIndex2 = (maxIndex + 2) % 3;
+
+			_DrawTrianglePart(edges[maxIndex], edges[minIndex1], _pImage);
+			_DrawTrianglePart(edges[maxIndex], edges[minIndex2], _pImage);
+
+			if (_uv._pData == 0)
+				pUVData = (char*)uvTemp._pData;
+
+			if (_color._pData == 0)
+				pColorData = (char*)colorTemp._pData;
+		}
+	}
+
 	void XRaster::_DrawSpan(const SpanParam& span, XImage* pImage)
 	{
 		//计算标准步长偏移
@@ -514,6 +622,33 @@ namespace Smile
 			scale1 += step1;
 			scale2 += step2;
 		}
+	}
+
+	void XRaster::_DrawTriangle(const TriangleParam& triangle, XImage* pImage)
+	{
+		EdgeParam edges[3] = {
+			EdgeParam(triangle._pos1, triangle._uv1, triangle._color1, triangle._pos2, triangle._uv2, triangle._color2),
+			EdgeParam(triangle._pos2, triangle._uv2, triangle._color2, triangle._pos3, triangle._uv3, triangle._color3),
+			EdgeParam(triangle._pos3, triangle._uv3, triangle._color3, triangle._pos1, triangle._uv1, triangle._color1) };
+
+		int maxIndex = 0;
+		float maxLength = edges[0]._pos2._y - edges[0]._pos1._y;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			float lenth = edges[i]._pos2._y - edges[i]._pos1._y;
+			if (lenth > maxLength)
+			{
+				maxIndex = i;
+				maxLength = lenth;
+			}
+		}
+
+		int minIndex1 = (maxIndex + 1) % 3;
+		int minIndex2 = (maxIndex + 2) % 3;
+
+		_DrawTrianglePart(edges[maxIndex], edges[minIndex1], pImage);
+		_DrawTrianglePart(edges[maxIndex], edges[minIndex2], pImage);
 	}
 }
 

@@ -78,6 +78,23 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	Smile::XImage* pImageTrain = Smile::XImage::LoadFromFile("../Resources/train.png");
 	Smile::XImage* pImageGrass = Smile::XImage::LoadFromFile("../Resources/grass.png");
 
+	struct DATA 
+	{
+		Smile::Vec2f pos;
+		Smile::Vec2f uv;
+		Smile::BGRA8U color;
+	};
+
+	DATA data[] = { 
+		{ Smile::Vec2f(100, 100), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(612, 100), Smile::Vec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(612, 612), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+
+		{ Smile::Vec2f(100, 100), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(100, 612), Smile::Vec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(612, 612), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+	};
+
 	//Msg Loop
 	MSG msg = {};
 	while (true)
@@ -98,39 +115,11 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Image
 		raster.DrawImage(0, 0, pImage);
-		
-		Smile::XRaster::TriangleParam triangle1 =
-		{
-			Smile::Vec2f(300, 300),
-			Smile::Vec2f(0.0f, 0.0f),
-			Smile::BGRA8U(0, 0, 0, 0),
-
-			Smile::Vec2f(812, 300),
-			Smile::Vec2f(1.0f, 0.0f),
-			Smile::BGRA8U(0, 0, 0, 0),
-
-			Smile::Vec2f(812, 812),
-			Smile::Vec2f(1.0f, 1.0f),
-			Smile::BGRA8U(0, 0, 0, 0),
-		};
-
-		Smile::XRaster::TriangleParam triangle2 =
-		{
-			Smile::Vec2f(300, 300),
-			Smile::Vec2f(0.0f, 0.0f),
-			Smile::BGRA8U(0, 0, 255, 0),
-
-			Smile::Vec2f(812, 812),
-			Smile::Vec2f(1.0f, 1.0f),
-			Smile::BGRA8U(0, 0, 255, 0),
-
-			Smile::Vec2f(300, 812),
-			Smile::Vec2f(0.0f, 1.0f),
-			Smile::BGRA8U(0, 0, 255, 0),
-		};
-
-		raster.DrawTriangle(triangle1, pImageGrass);
-		raster.DrawTriangle(triangle2, pImageGrass);
+		raster.VertexPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].pos);
+		raster.UVPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].uv);
+		raster.ColorPointer(4, Smile::XRaster::_DT_UNSIGNEDCHAR, sizeof(DATA), &data[0].color);
+		raster.BindTexture(pImageTrain);
+		raster.DrawArray(Smile::XRaster::_DRAWTRIANGLES, 0, 6);
 
 		//Timer End
 		timer.End();

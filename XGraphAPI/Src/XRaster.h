@@ -19,6 +19,7 @@ namespace Smile
 			_DRAWLINES = 2,
 			_DRAWLINESTRIP = 3,
 			_DRAWLINELOOP = 4,
+			_DRAWTRIANGLES = 5,
 		};
 
 		typedef _DRAWMODE DRAWMODE;
@@ -34,6 +35,18 @@ namespace Smile
 
 		typedef _POINTSIZE POINTSIZE;
 	
+		//数据类型
+		enum _DATATYPE
+		{
+			_DT_NONE = 0,
+			_DT_CHAR = 1,
+			_DT_UNSIGNEDCHAR = 2,
+			_DT_FLOAT = 3,
+			_DT_DOUBLE = 4,
+		};
+
+		typedef _DATATYPE DATATYPE;
+
 	private:
 		//三角形参数
 		class _SpanParam
@@ -113,7 +126,6 @@ namespace Smile
 
 		typedef _EdgeParam EdgeParam;
 		
-	public:
 		class _TriangleParam
 		{
 		public:
@@ -160,8 +172,7 @@ namespace Smile
 		void DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len);
 		void DrawSolidRect(float x, float y, float w, float h, BGRA8U color);
 		void DrawColorRect(Vec2f* posArray, BGRA8U* colorArray);
-		void DrawTriangle(const TriangleParam& triangle, XImage* pImage);
-
+		
 		void DrawImage(float x, float y, float w, float h);
 		void DrawImage(float x, float y, XImage* pImage);
 		void DrawImageWithColorKey(float x, float y, XImage* pImage, BGRA8U colorKey);
@@ -171,6 +182,13 @@ namespace Smile
 		void DrawImageWithTransparent(float x, float y, XImage* pImage, float alpha);
 		void DrawImageWithSize(float x, float y, XImage* pImage, float imageX, float imageY, float imageWidth, float imageHeight);
 		void DrawImageWithScale(float x, float y, float w, float h, XImage* pImage);
+
+		//使用状态机模式
+		void VertexPointer(int size, DATATYPE type, int stride, void* pData);
+		void UVPointer(int size, DATATYPE type, int stride, void* pData);
+		void ColorPointer(int size, DATATYPE type, int stride, void* pData);
+		void BindTexture(XImage* pImage);
+		void DrawArray(DRAWMODE drawMode, int start, int end);
 
 	private:
 		inline BGRA8U _GetPix(unsigned int x, unsigned int y)
@@ -209,14 +227,40 @@ namespace Smile
 			return uv;
 		}
 
+		//绘制三角形
 		void _DrawSpan(const SpanParam& spanParam, XImage* pImage);
 		void _DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2, XImage* pImage);
+		void _DrawTriangle(const TriangleParam& triangle, XImage* pImage);
 
-	private:
+	private:	//基本数据
 		BGRA8U BGRA8U_RED;
 
 		unsigned int* _pBuffer;
 		unsigned int _w;
 		unsigned int _h;
+
+	private:	//状态机数据
+		//状态机内部结构
+		class _Element
+		{
+		public:
+			int _size;
+			DATATYPE _type;
+			int _stride;
+			void* _pData;
+		};
+
+		typedef _Element Element;
+		Element _vertex;
+		Element _uv;
+		Element _color;
+
+		Element _uvDefault;
+		Element _colorDefault;
+
+		Vec2f _defaultUVArray[3];
+		BGRA8U _defaultColorArray[3];
+
+		XImage* _pImage;
 	};
 }
