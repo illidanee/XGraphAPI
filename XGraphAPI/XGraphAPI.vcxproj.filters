@@ -44,5 +44,8 @@
     <ClInclude Include="Src\XImage.h">
       <Filter>Src</Filter>
     </ClInclude>
+    <ClInclude Include="Src\XMath.h">
+      <Filter>Src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include <memory.h>
 #include <math.h>
 #include "CommonType.h"
+#include "XMath.h"
 #include "XImage.h"
 
 namespace Smile 
@@ -190,6 +191,10 @@ namespace Smile
 		void BindTexture(XImage* pImage);
 		void DrawArray(DRAWMODE drawMode, int start, int end);
 
+		//¾ØÕó²Ù×÷
+		void LoadIdentity();
+		void LoadModelMatrix(XMatrix3f modelMatrix);
+
 	private:
 		inline BGRA8U _GetPix(unsigned int x, unsigned int y)
 		{
@@ -262,5 +267,7 @@ namespace Smile
 		BGRA8U _defaultColorArray[3];
 
 		XImage* _pImage;
+
+		XMatrix3f _ModelMatrix;
 	};
 }

@@ -485,13 +485,21 @@ namespace Smile
 			//Vertex
 			//char* pPosData = (char*)_vertex._pData;
 			float* pPos = (float*)pPosData;
-			Vec2f pos1(pPos[0], pPos[1]);
+			Vec3f pos1Temp(pPos[0], pPos[1], 1.0f);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			Vec2f pos2(pPos[0], pPos[1]);
+			Vec3f pos2Temp(pPos[0], pPos[1], 1.0f);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			Vec2f pos3(pPos[0], pPos[1]);
+			Vec3f pos3Temp(pPos[0], pPos[1], 1.0f);
+
+			pos1Temp = _ModelMatrix * pos1Temp;
+			pos2Temp = _ModelMatrix * pos2Temp;
+			pos3Temp = _ModelMatrix * pos3Temp;
+
+			Vec2f pos1(pos1Temp._x, pos1Temp._y);
+			Vec2f pos2(pos2Temp._x, pos2Temp._y);
+			Vec2f pos3(pos3Temp._x, pos3Temp._y);
 
 			//UV
 			float* pUV = (float*)pUVData;
@@ -544,6 +552,16 @@ namespace Smile
 			if (_color._pData == 0)
 				pColorData = (char*)colorTemp._pData;
 		}
+	}
+
+	void XRaster::LoadIdentity()
+	{
+		_ModelMatrix = XMatrix3f();
+	}
+
+	void XRaster::LoadModelMatrix(XMatrix3f modelMatrix)
+	{
+		_ModelMatrix = modelMatrix;
 	}
 
 	void XRaster::_DrawSpan(const SpanParam& span, XImage* pImage)

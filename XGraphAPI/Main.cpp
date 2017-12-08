@@ -87,14 +87,28 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 
 	DATA data[] = { 
-		{ Smile::Vec2f(100, 100), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(612, 100), Smile::Vec2f(2.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(612, 612), Smile::Vec2f(2.0f, 2.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(0, 0), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(512, 0), Smile::Vec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(512, 512), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
-		{ Smile::Vec2f(100, 100), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(100, 612), Smile::Vec2f(0.0f, 2.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(612, 612), Smile::Vec2f(2.0f, 2.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(0, 0), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(0, 512), Smile::Vec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::Vec2f(512, 512), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 	};
+
+	float angle = 30.0f;
+
+	//æÿ’Û≤Ÿ◊˜
+	Smile::XMatrix3f allMatrix;
+
+	Smile::XMatrix3f translateMatrix1;
+	translateMatrix1.Translate(-256, -256);
+
+	Smile::XMatrix3f scaleMatrix;
+	scaleMatrix.Scale(0.5f, 0.5f);
+
+	Smile::XMatrix3f translateMatrix2;
+	translateMatrix2.Translate(512, 512);
 
 	//Msg Loop
 	MSG msg = {};
@@ -116,10 +130,21 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		//Draw Image
 		raster.DrawImage(0, 0, pImage);
+		
+		//∞Û∂®
 		raster.VertexPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].pos);
 		raster.UVPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].uv);
 		raster.ColorPointer(4, Smile::XRaster::_DT_UNSIGNEDCHAR, sizeof(DATA), &data[0].color);
 		raster.BindTexture(pImageTrain);
+
+		//º”‘ÿæÿ’Û
+		Smile::XMatrix3f rotateMatrix;
+		rotateMatrix.Rotate(angle);
+		allMatrix = translateMatrix2 * rotateMatrix * scaleMatrix * translateMatrix1;
+		raster.LoadModelMatrix(allMatrix);
+		angle += 1.0f;
+
+		//ªÊ÷∆
 		raster.DrawArray(Smile::XRaster::_DRAWTRIANGLES, 0, 6);
 
 		//Timer End
