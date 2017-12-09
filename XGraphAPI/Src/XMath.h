@@ -153,8 +153,8 @@ namespace Smile
 
 		void Scale(T x, T y)
 		{
-			_row[0][0] *= x;
-			_row[1][1] *= y;
+			_row[0][0] = x;
+			_row[1][1] = y;
 		}
 
 		void Rotate(T angle)
@@ -162,16 +162,16 @@ namespace Smile
 			T rad = ANGLE2RADIAN(angle);
 			T c = cosf(rad);
 			T s = sinf(rad);
-			_row[0][0] *= c;
-			_row[0][1] = s;
-			_row[1][0] = -s;
-			_row[1][1] *= c;
+			_row[0][0] = c;
+			_row[0][1] = -s;
+			_row[1][0] = s;
+			_row[1][1] = c;
 		}
 
 		void Translate(T x, T y)
 		{
-			_row[0][2] += x;
-			_row[1][2] += y;
+			_row[0][2] = x;
+			_row[1][2] = y;
 		}
 
 	private:
