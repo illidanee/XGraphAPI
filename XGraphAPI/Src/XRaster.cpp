@@ -19,7 +19,7 @@ namespace Smile
 
 		_uvDefault._size = 2;
 		_uvDefault._type = _DT_FLOAT;
-		_uvDefault._stride = sizeof(Vec2f);
+		_uvDefault._stride = sizeof(XVec2f);
 		_uvDefault._pData = _defaultUVArray;
 
 		_colorDefault._size = 4;
@@ -77,12 +77,12 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawPoint(Vec2f pos, BGRA8U color, POINTSIZE ps)
+	void XRaster::DrawPoint(XVec2f pos, BGRA8U color, POINTSIZE ps)
 	{
 		DrawPoint(pos._x, pos._y, color, ps);
 	}
 
-	void XRaster::DrawLine(Vec2f pos1, Vec2f pos2, BGRA8U color)
+	void XRaster::DrawLine(XVec2f pos1, XVec2f pos2, BGRA8U color)
 	{
 		float xOffset = pos1._x - pos2._x;
 		float yOffset = pos1._y - pos2._y;
@@ -140,7 +140,7 @@ namespace Smile
 		//}
 	}
 
-	void XRaster::DrawLine(Vec2f pos1, Vec2f pos2, BGRA8U color1, BGRA8U color2)
+	void XRaster::DrawLine(XVec2f pos1, XVec2f pos2, BGRA8U color1, BGRA8U color2)
 	{
 		float xOffset = pos1._x - pos2._x;
 		float yOffset = pos1._y - pos2._y;
@@ -178,7 +178,7 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawArray(DRAWMODE drawMode, Vec2f* posArray, int len)
+	void XRaster::DrawArray(DRAWMODE drawMode, XVec2f* posArray, int len)
 	{
 		switch (drawMode)
 		{
@@ -235,7 +235,7 @@ namespace Smile
 		}
 	}
 
-	void XRaster::DrawColorRect(Vec2f* posArray, BGRA8U* colorArray)
+	void XRaster::DrawColorRect(XVec2f* posArray, BGRA8U* colorArray)
 	{
 		float left = std::max<float>(posArray[0]._x, 0);
 		float bottom = std::max<float>(posArray[0]._y, 0);
@@ -485,31 +485,31 @@ namespace Smile
 			//Vertex
 			//char* pPosData = (char*)_vertex._pData;
 			float* pPos = (float*)pPosData;
-			Vec3f pos1Temp(pPos[0], pPos[1], 1.0f);
+			XVec4f pos1Temp(pPos[0], pPos[1], pPos[2], 1.0f);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			Vec3f pos2Temp(pPos[0], pPos[1], 1.0f);
+			XVec4f pos2Temp(pPos[0], pPos[1], pPos[2], 1.0f);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			Vec3f pos3Temp(pPos[0], pPos[1], 1.0f);
+			XVec4f pos3Temp(pPos[0], pPos[1], pPos[2], 1.0f);
 
 			pos1Temp = _ModelMatrix * pos1Temp;
 			pos2Temp = _ModelMatrix * pos2Temp;
 			pos3Temp = _ModelMatrix * pos3Temp;
 
-			Vec2f pos1(pos1Temp._x, pos1Temp._y);
-			Vec2f pos2(pos2Temp._x, pos2Temp._y);
-			Vec2f pos3(pos3Temp._x, pos3Temp._y);
+			XVec2f pos1(pos1Temp._x, pos1Temp._y);
+			XVec2f pos2(pos2Temp._x, pos2Temp._y);
+			XVec2f pos3(pos3Temp._x, pos3Temp._y);
 
 			//UV
 			float* pUV = (float*)pUVData;
-			Vec2f uv1(pUV[0], pUV[1]);
+			XVec2f uv1(pUV[0], pUV[1]);
 			pUVData += uvTemp._stride;
 			pUV = (float*)pUVData;
-			Vec2f uv2(pUV[0], pUV[1]);
+			XVec2f uv2(pUV[0], pUV[1]);
 			pUVData += uvTemp._stride;
 			pUV = (float*)pUVData;
-			Vec2f uv3(pUV[0], pUV[1]);
+			XVec2f uv3(pUV[0], pUV[1]);
 
 			//Color
 			BGRA8U* pColor = (BGRA8U*)pColorData;
@@ -556,10 +556,10 @@ namespace Smile
 
 	void XRaster::LoadIdentity()
 	{
-		_ModelMatrix = XMatrix3f();
+		_ModelMatrix = XMat4f();
 	}
 
-	void XRaster::LoadModelMatrix(XMatrix3f modelMatrix)
+	void XRaster::LoadModelMatrix(XMat4f modelMatrix)
 	{
 		_ModelMatrix = modelMatrix;
 	}
@@ -579,7 +579,7 @@ namespace Smile
 		//for (float x = span._xStart; x < span._xEndl; ++x)
 		for (float x = startX; x < endX; ++x)
 		{
-			Vec2f uv = _LerpUV(span._startUV, span._endUV, scale);
+			XVec2f uv = _LerpUV(span._startUV, span._endUV, scale);
 			BGRA8U colorUV = pImage->DataUV(uv._u, uv._v);
 
 			BGRA8U colorXY = _LerpColor(span._startColor, span._endColor, scale);
@@ -625,11 +625,11 @@ namespace Smile
 		//for (float y = e2._y1; y < e2._y2; ++y)
 		for (float y = startY2; y < endY2; ++y)
 		{
-			Vec2f pos1(e1._pos1._x + xOffset1 * scale1, y);
-			Vec2f pos2(e2._pos1._x + xOffset2 * scale2, y);
+			XVec2f pos1(e1._pos1._x + xOffset1 * scale1, y);
+			XVec2f pos2(e2._pos1._x + xOffset2 * scale2, y);
 
-			Vec2f uv1 = _LerpUV(e1._uv1, e1._uv2, scale1);
-			Vec2f uv2 = _LerpUV(e2._uv1, e2._uv2, scale2);
+			XVec2f uv1 = _LerpUV(e1._uv1, e1._uv2, scale1);
+			XVec2f uv2 = _LerpUV(e2._uv1, e2._uv2, scale2);
 
 			BGRA8U color1 = _LerpColor(e1._color1, e1._color2, scale1);
 			BGRA8U color2 = _LerpColor(e2._color1, e2._color2, scale2);

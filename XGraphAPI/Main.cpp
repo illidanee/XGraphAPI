@@ -81,34 +81,34 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	struct DATA 
 	{
-		Smile::Vec2f pos;
-		Smile::Vec2f uv;
+		Smile::XVec3f pos;
+		Smile::XVec2f uv;
 		Smile::BGRA8U color;
 	};
 
 	DATA data[] = { 
-		{ Smile::Vec2f(0, 0), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(512, 0), Smile::Vec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(512, 512), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(0, 0, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(512, 0, 0.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(512, 512, 0.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
-		{ Smile::Vec2f(0, 0), Smile::Vec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(0, 512), Smile::Vec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::Vec2f(512, 512), Smile::Vec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(0, 0, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(0, 512, 0.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(512, 512, 0.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 	};
 
 	float angle = 30.0f;
 
 	//¾ØÕó²Ù×÷
-	Smile::XMatrix3f allMatrix;
+	Smile::XMat4f allMatrix;
 
-	Smile::XMatrix3f translateMatrix1;
-	translateMatrix1.Translate(-256, -256);
+	Smile::XMat4f translateMatrix1;
+	translateMatrix1.Translate(-256, -256, 0.0f);
 
-	Smile::XMatrix3f scaleMatrix;
-	scaleMatrix.Scale(0.5f, 0.5f);
+	Smile::XMat4f scaleMatrix;
+	scaleMatrix.Scale(1.0f, 1.0f, 1.0f);
 
-	Smile::XMatrix3f translateMatrix2;
-	translateMatrix2.Translate(512, 512);
+	Smile::XMat4f translateMatrix2;
+	translateMatrix2.Translate(256, 256, 0.0f);
 
 	//Msg Loop
 	MSG msg = {};
@@ -138,9 +138,9 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		raster.BindTexture(pImageTrain);
 
 		//¼ÓÔØ¾ØÕó
-		Smile::XMatrix3f rotateMatrix;
-		rotateMatrix.Rotate(angle);
-		allMatrix = translateMatrix2 * rotateMatrix * scaleMatrix * translateMatrix1;
+		Smile::XMat4f rotateMatrix;
+		rotateMatrix.Rotate(angle, Smile::XVec3f(0.0f, 0.0f, 1.0f));
+		allMatrix = translateMatrix2 * scaleMatrix * rotateMatrix * translateMatrix1;
 		raster.LoadModelMatrix(allMatrix);
 		angle += 1.0f;
 
