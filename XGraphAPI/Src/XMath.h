@@ -37,6 +37,11 @@ namespace Smile
 				T _u;
 				T _v;
 			};
+			struct 
+			{
+				T _w;
+				T _h;
+			};
 			T _data[2];
 		};
 	};
@@ -59,6 +64,11 @@ namespace Smile
 		const T& operator [] (unsigned int i) const
 		{
 			return _data[i];
+		}
+
+		_XVector3<T> operator - (const _XVector3<T>& that)
+		{
+			return _XVector3<T>(_x - that._x, _y - that._y, _z - that._z);
 		}
 
 	public:
@@ -257,12 +267,12 @@ namespace Smile
 			_row[3] = _RowType(that._row[3]);
 		}
 
-		_RowType operator [] (unsigned int i)
+		_RowType& operator [] (unsigned int i)
 		{
 			return _row[i];
 		}
 
-		const _RowType operator [] (unsigned int i) const
+		const _RowType& operator [] (unsigned int i) const
 		{
 			return _row[i];
 		}
@@ -335,9 +345,97 @@ namespace Smile
 			_row[2][3] = z;
 		}
 
+		_XMatrix4<T> Transpose()
+		{
+			return _XMatrix4<T>(
+				_row[0][0], _row[1][0], _row[2][0], _row[3][0],
+				_row[0][1], _row[1][1], _row[2][1], _row[3][1],
+				_row[0][2], _row[1][2], _row[2][2], _row[3][2],
+				_row[0][3], _row[1][3], _row[2][3], _row[3][3]
+				);
+		}
+
 	private:
 		_RowType _row[4];
 	};
 
 	typedef _XMatrix4<float> XMat4f;
+
+//È«¾Öº¯Êý
+	template<typename T>
+	_XVector3<T> Normalize(_XVector3<T> vector)
+	{
+		T sqr = sqrtf(vector._x * vector._x + vector._y * vector._y + vector._z * vector._z);
+		return _XVector3<T>(vector._x / sqr, vector._y / sqr, vector._z / sqr);
+	}
+
+	template<typename T>
+	T Dot(_XVector3<T> vector1, _XVector3<T> vector2)
+	{
+		return vector1._x * vector2._x + vector1._y * vector2._y + vector1._z * vector2._z;
+	}
+
+	template<typename T>
+	_XVector3<T> Cross(_XVector3<T> vector1, _XVector3<T> vector2)
+	{
+		return _XVector3<T>(
+			vector1._y * vector2._z - vector2._y * vector1._z,
+			vector1._z * vector2._x - vector2._z * vector1._x,
+			vector1._x * vector2._y - vector2._x * vector1._y
+			);
+	}
+
+	template<typename T>
+	_XMatrix4<T> LookAt(_XVector3<T> pos, _XVector3<T> forward, _XVector3<T> up)
+	{
+		_XVector3<T> f = Normalize<T>(forward - pos);
+		_XVector3<T> u = Normalize<T>(up);
+		_XVector3<T> r = Normalize<T>(Cross<T>(f, u));
+		u = Normalize<T>(Cross<T>(r, f));
+
+		_XMatrix4<T> vMatrix;
+
+		vMatrix[0][0] = r._x;
+		vMatrix[0][1] = r._y;
+		vMatrix[0][2] = r._z;
+		vMatrix[0][3] = -Dot<T>(r, pos);
+
+		vMatrix[1][0] = u._x;
+		vMatrix[1][1] = u._y;
+		vMatrix[1][2] = u._z;
+		vMatrix[1][3] = -Dot<T>(u, pos);
+
+		vMatrix[2][0] = -f._x;
+		vMatrix[2][1] = -f._y;
+		vMatrix[2][2] = -f._z;
+		vMatrix[2][3] = Dot<T>(f, pos);
+
+		return vMatrix;
+	}
+
+	template<typename T>
+	_XMatrix4<T> Perspective(T fovy, T aspect, T zNear, T zFar)
+	{
+		T range = tanf(ANGLE2RADIAN(fovy * 0.5f)) * zNear;
+		T left = -range * aspect;
+		T right = range * aspect;
+		T bottom = -range;
+		T top = range;
+
+		_XMatrix4<T> pMatrix;
+
+		pMatrix[0][0] = (2.0f * zNear) / (right - left);
+		pMatrix[0][2] = (right + left) / (right - left);
+
+		pMatrix[1][1] = (2.0f * zNear) / (top - bottom);
+		pMatrix[1][2] = (top + bottom) / (top - bottom);
+
+		pMatrix[2][2] = -(zFar + zNear) / (zFar - zNear);
+		pMatrix[2][3] = -(2.0f * zFar * zNear) / (zFar - zNear);
+
+		pMatrix[3][2] = -1.0f;
+		pMatrix[3][3] = 0.0f;
+
+		return  pMatrix;
+	}
 }

@@ -76,7 +76,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	Smile::XTimer timer;
 	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/bgWhite.png");
 	Smile::XImage* pImageTrain = Smile::XImage::LoadFromFile("../Resources/train.png");
-	pImageTrain->SetWrapType(Smile::XImage::_WT_EDGE);
+	//pImageTrain->SetWrapType(Smile::XImage::_WT_EDGE);
 	Smile::XImage* pImageGrass = Smile::XImage::LoadFromFile("../Resources/grass.png");
 
 	struct DATA 
@@ -87,13 +87,13 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 
 	DATA data[] = { 
-		{ Smile::XVec3f(0, 0, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(512, 0, 0.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(512, 512, 0.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-2, -2, 5.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(2, -2, 5.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(2, 2, 5.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
-		{ Smile::XVec3f(0, 0, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(0, 512, 0.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(512, 512, 0.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-2, -2, 5.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-2, 2, 5.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(2, 2, 5.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 	};
 
 	float angle = 30.0f;
@@ -101,14 +101,21 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	//¾ØÕó²Ù×÷
 	Smile::XMat4f allMatrix;
 
-	Smile::XMat4f translateMatrix1;
-	translateMatrix1.Translate(-256, -256, 0.0f);
+	Smile::XMat4f translateMatrix;
+	translateMatrix.Translate(2, 2, -10.0f);
 
 	Smile::XMat4f scaleMatrix;
-	scaleMatrix.Scale(1.0f, 1.0f, 1.0f);
+	scaleMatrix.Scale(1.2f, 1.2f, 1.2f);
 
-	Smile::XMat4f translateMatrix2;
-	translateMatrix2.Translate(256, 256, 0.0f);
+	Smile::XMat4f modelMatrix = Smile::XMat4f();
+	Smile::XMat4f viewMatrix = Smile::LookAt<float>(Smile::XVec3f(0.0f, 0.0f, 10.0f), Smile::XVec3f(0.0f, 0.0f, 0.0f), Smile::XVec3f(0.0f, 1.0f, 0.0f));
+	Smile::XMat4f projectMatrix = Smile::Perspective<float>(90.0f, (float)_gWindowWidth / _gWindowHeight, 0.01f, 100.0f);
+	
+	//Draw
+	Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);
+	//raster.LoadModelMatrix(modelMatrix);
+	raster.LoadViewMatrix(viewMatrix);
+	raster.LoadProjectionMatrix(projectMatrix);
 
 	//Msg Loop
 	MSG msg = {};
@@ -122,9 +129,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
-		//Draw
-		Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);		raster.Clean();
+		raster.Clean();
 		//Timer Begin
 		timer.Begin();
 
@@ -140,7 +145,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		//¼ÓÔØ¾ØÕó
 		Smile::XMat4f rotateMatrix;
 		rotateMatrix.Rotate(angle, Smile::XVec3f(0.0f, 0.0f, 1.0f));
-		allMatrix = translateMatrix2 * scaleMatrix * rotateMatrix * translateMatrix1;
+		allMatrix = scaleMatrix * rotateMatrix * translateMatrix;
 		raster.LoadModelMatrix(allMatrix);
 		angle += 1.0f;
 

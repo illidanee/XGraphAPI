@@ -192,8 +192,12 @@ namespace Smile
 		void DrawArray(DRAWMODE drawMode, int start, int end);
 
 		//矩阵操作
-		void LoadIdentity();
+		void LoadModelIdentity();
 		void LoadModelMatrix(XMat4f modelMatrix);
+		void LoadViewIdentity();
+		void LoadViewMatrix(XMat4f viewMatrix);
+		void LoadProjectionIdentity();
+		void LoadProjectionMatrix(XMat4f projectMatrix);
 
 	private:
 		inline BGRA8U _GetPix(unsigned int x, unsigned int y)
@@ -237,6 +241,9 @@ namespace Smile
 		void _DrawTrianglePart(const EdgeParam& e1, const EdgeParam& e2, XImage* pImage);
 		void _DrawTriangle(const TriangleParam& triangle, XImage* pImage);
 
+		//固定管线
+		XVec3f _Pipeline(XVec3f vector);
+
 	private:	//基本数据
 		BGRA8U BGRA8U_RED;
 
@@ -269,5 +276,9 @@ namespace Smile
 		XImage* _pImage;
 
 		XMat4f _ModelMatrix;
+		XMat4f _ViewMatrix;
+		XMat4f _ProjectionMatrix;
+
+		XVec2f _ViewPort;
 	};
 }

@@ -28,6 +28,9 @@ namespace Smile
 		_colorDefault._pData = _defaultColorArray;
 
 		_pImage = 0;
+
+		_ViewPort._w = _w;
+		_ViewPort._h = _h;
 	}
 
 	XRaster::~XRaster()
@@ -485,17 +488,17 @@ namespace Smile
 			//Vertex
 			//char* pPosData = (char*)_vertex._pData;
 			float* pPos = (float*)pPosData;
-			XVec4f pos1Temp(pPos[0], pPos[1], pPos[2], 1.0f);
+			XVec3f pos1Temp(pPos[0], pPos[1], pPos[2]);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			XVec4f pos2Temp(pPos[0], pPos[1], pPos[2], 1.0f);
+			XVec3f pos2Temp(pPos[0], pPos[1], pPos[2]);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			XVec4f pos3Temp(pPos[0], pPos[1], pPos[2], 1.0f);
+			XVec3f pos3Temp(pPos[0], pPos[1], pPos[2]);
 
-			pos1Temp = _ModelMatrix * pos1Temp;
-			pos2Temp = _ModelMatrix * pos2Temp;
-			pos3Temp = _ModelMatrix * pos3Temp;
+			pos1Temp = _Pipeline(pos1Temp);
+			pos2Temp = _Pipeline(pos2Temp);
+			pos3Temp = _Pipeline(pos3Temp);
 
 			XVec2f pos1(pos1Temp._x, pos1Temp._y);
 			XVec2f pos2(pos2Temp._x, pos2Temp._y);
@@ -554,7 +557,7 @@ namespace Smile
 		}
 	}
 
-	void XRaster::LoadIdentity()
+	void XRaster::LoadModelIdentity()
 	{
 		_ModelMatrix = XMat4f();
 	}
@@ -562,6 +565,26 @@ namespace Smile
 	void XRaster::LoadModelMatrix(XMat4f modelMatrix)
 	{
 		_ModelMatrix = modelMatrix;
+	}
+
+	void XRaster::LoadViewIdentity()
+	{
+		_ViewMatrix = XMat4f();
+	}
+
+	void XRaster::LoadViewMatrix(XMat4f viewMatrix)
+	{
+		_ViewMatrix = viewMatrix;
+	}
+
+	void XRaster::LoadProjectionIdentity()
+	{
+		_ProjectionMatrix = XMat4f();
+	}
+
+	void XRaster::LoadProjectionMatrix(XMat4f projectMatrix)
+	{
+		_ProjectionMatrix = projectMatrix;
 	}
 
 	void XRaster::_DrawSpan(const SpanParam& span, XImage* pImage)
@@ -667,6 +690,34 @@ namespace Smile
 
 		_DrawTrianglePart(edges[maxIndex], edges[minIndex1], pImage);
 		_DrawTrianglePart(edges[maxIndex], edges[minIndex2], pImage);
+	}
+
+	XVec3f XRaster::_Pipeline(XVec3f vector)
+	{
+		//转换4维齐次坐标
+		XVec4f worldPos(vector._x, vector._y, vector._z, 1.0f);
+
+		//坐标转换
+		XVec4f screenPos = (_ProjectionMatrix * _ViewMatrix * _ModelMatrix) * worldPos;
+
+		if (screenPos._w == 0)
+			return XVec3f();
+
+		//转换到（-1 ~ +1）
+		screenPos._x /= screenPos._w;
+		screenPos._y /= screenPos._w;
+		screenPos._z /= screenPos._w;
+
+		//转换到（0 ~ +1）
+		screenPos._x = screenPos._x * 0.5f + 0.5f;
+		screenPos._y = screenPos._y * 0.5f + 0.5f;
+		screenPos._z = screenPos._z * 0.5f + 0.5f;
+
+		//转换到屏幕坐标
+		screenPos._x = screenPos._x * _ViewPort._w;
+		screenPos._y = screenPos._y * _ViewPort._h;
+
+		return XVec3f(screenPos._x, screenPos._y, screenPos._z);
 	}
 }
 
