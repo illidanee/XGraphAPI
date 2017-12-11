@@ -388,10 +388,10 @@ namespace Smile
 	template<typename T>
 	_XMatrix4<T> LookAt(_XVector3<T> pos, _XVector3<T> forward, _XVector3<T> up)
 	{
-		_XVector3<T> f = Normalize<T>(forward - pos);
+		_XVector3<T> f = Normalize<T>(pos - forward);
 		_XVector3<T> u = Normalize<T>(up);
-		_XVector3<T> r = Normalize<T>(Cross<T>(f, u));
-		u = Normalize<T>(Cross<T>(r, f));
+		_XVector3<T> r = Normalize<T>(Cross<T>(u, f));
+		u = Normalize<T>(Cross<T>(f, r));
 
 		_XMatrix4<T> vMatrix;
 
@@ -405,10 +405,10 @@ namespace Smile
 		vMatrix[1][2] = u._z;
 		vMatrix[1][3] = -Dot<T>(u, pos);
 
-		vMatrix[2][0] = -f._x;
-		vMatrix[2][1] = -f._y;
-		vMatrix[2][2] = -f._z;
-		vMatrix[2][3] = Dot<T>(f, pos);
+		vMatrix[2][0] = f._x;
+		vMatrix[2][1] = f._y;
+		vMatrix[2][2] = f._z;
+		vMatrix[2][3] = -Dot<T>(f, pos);
 
 		return vMatrix;
 	}
