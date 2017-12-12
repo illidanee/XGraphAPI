@@ -24,6 +24,11 @@ namespace Smile
 			return _data[i];
 		}
 
+		_XVector2<T> operator - (const _XVector2<T>& that)
+		{
+			return _XVector2<T>(_x - that._x, _y - that._y);
+		}
+
 	public:
 		union
 		{
@@ -218,6 +223,15 @@ namespace Smile
 		{
 			_row[0][2] = x;
 			_row[1][2] = y;
+		}
+
+		_XMatrix3<T> Transpose()
+		{
+			return _XMatrix3<T>(
+				_row[0][0], _row[1][0], _row[2][0],
+				_row[0][1], _row[1][1], _row[2][1],
+				_row[0][2], _row[1][2], _row[2][2]
+				);
 		}
 
 	private:
