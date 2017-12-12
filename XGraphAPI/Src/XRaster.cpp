@@ -29,8 +29,8 @@ namespace Smile
 
 		_pImage = 0;
 
-		_ViewPort._w = _w;
-		_ViewPort._h = _h;
+		_viewport._w = _w;
+		_viewport._h = _h;
 	}
 
 	XRaster::~XRaster()
@@ -482,27 +482,50 @@ namespace Smile
 		char* pUVData = (char*)uvTemp._pData;
 		char* pColorData = (char*)colorTemp._pData;
 
+		//计算pv矩阵
+		_pvMatrix = _pMatrix * _vMatrix;
+
+		//生成视椎体
+		_frustum.Init(_pvMatrix);
+
 		end = end / 3 * 3;
 		for (int i = start; i < end; i += 3)
 		{
 			//Vertex
 			//char* pPosData = (char*)_vertex._pData;
 			float* pPos = (float*)pPosData;
-			XVec3f pos1Temp(pPos[0], pPos[1], pPos[2]);
+			XVec4f pos1Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			XVec3f pos2Temp(pPos[0], pPos[1], pPos[2]);
+			XVec4f pos2Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
 			pPosData += _vertex._stride;
 			pPos = (float*)pPosData;
-			XVec3f pos3Temp(pPos[0], pPos[1], pPos[2]);
+			XVec4f pos3Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
 
-			pos1Temp = _Pipeline(pos1Temp);
-			pos2Temp = _Pipeline(pos2Temp);
-			pos3Temp = _Pipeline(pos3Temp);
+			//将顶点从模型本地坐标系转换到世界坐标系。
+			pos1Temp4 = _mMatrix * pos1Temp4;
+			pos2Temp4 = _mMatrix * pos2Temp4;
+			pos3Temp4 = _mMatrix * pos3Temp4;
 
-			XVec2f pos1(pos1Temp._x, pos1Temp._y);
-			XVec2f pos2(pos2Temp._x, pos2Temp._y);
-			XVec2f pos3(pos3Temp._x, pos3Temp._y);
+			XVec3f pos1Temp3(pos1Temp4._x, pos1Temp4._y, pos1Temp4._z);
+			XVec3f pos2Temp3(pos2Temp4._x, pos2Temp4._y, pos2Temp4._z);
+			XVec3f pos3Temp3(pos3Temp4._x, pos3Temp4._y, pos3Temp4._z);
+
+			//裁剪坐标
+			if (!_frustum.PointInFrustum(pos1Temp3) && !_frustum.PointInFrustum(pos2Temp3) && !_frustum.PointInFrustum(pos3Temp3))
+			{
+				return;
+			}
+
+			//固定管线计算。
+			pos1Temp3 = _Pipeline(pos1Temp3);
+			pos2Temp3 = _Pipeline(pos2Temp3);
+			pos3Temp3 = _Pipeline(pos3Temp3);
+
+			//以下是二维绘制。
+			XVec2f pos1(pos1Temp3._x, pos1Temp3._y);
+			XVec2f pos2(pos2Temp3._x, pos2Temp3._y);
+			XVec2f pos3(pos3Temp3._x, pos3Temp3._y);
 
 			//UV
 			float* pUV = (float*)pUVData;
@@ -557,34 +580,44 @@ namespace Smile
 		}
 	}
 
-	void XRaster::LoadModelIdentity()
+	void XRaster::LoadMIdentity()
 	{
-		_ModelMatrix = XMat4f();
+		_mMatrix = XMat4f();
 	}
 
-	void XRaster::LoadModelMatrix(XMat4f modelMatrix)
+	void XRaster::LoadMMatrix(XMat4f mMatrix)
 	{
-		_ModelMatrix = modelMatrix;
+		_mMatrix = mMatrix;
 	}
 
-	void XRaster::LoadViewIdentity()
+	void XRaster::LoadVIdentity()
 	{
-		_ViewMatrix = XMat4f();
+		_vMatrix = XMat4f();
 	}
 
-	void XRaster::LoadViewMatrix(XMat4f viewMatrix)
+	void XRaster::LoadVMatrix(XMat4f vMatrix)
 	{
-		_ViewMatrix = viewMatrix;
+		_vMatrix = vMatrix;
 	}
 
-	void XRaster::LoadProjectionIdentity()
+	void XRaster::LoadPIdentity()
 	{
-		_ProjectionMatrix = XMat4f();
+		_pMatrix = XMat4f();
 	}
 
-	void XRaster::LoadProjectionMatrix(XMat4f projectMatrix)
+	void XRaster::LoadPMatrix(XMat4f pMatrix)
 	{
-		_ProjectionMatrix = projectMatrix;
+		_pMatrix = pMatrix;
+	}
+
+	void XRaster::LoadPVIdentity()
+	{
+		_pvMatrix = XMat4f();
+	}
+
+	void XRaster::LoadPVMatrix(XMat4f pvMatrix)
+	{
+		_pvMatrix = pvMatrix;
 	}
 
 	void XRaster::_DrawSpan(const SpanParam& span, XImage* pImage)
@@ -698,7 +731,7 @@ namespace Smile
 		XVec4f worldPos(vector._x, vector._y, vector._z, 1.0f);
 
 		//坐标转换
-		XVec4f screenPos = (_ProjectionMatrix * _ViewMatrix * _ModelMatrix) * worldPos;
+		XVec4f screenPos = _pvMatrix * worldPos;
 
 		if (screenPos._w == 0)
 			return XVec3f();
@@ -714,8 +747,8 @@ namespace Smile
 		screenPos._z = screenPos._z * 0.5f + 0.5f;
 
 		//转换到屏幕坐标
-		screenPos._x = screenPos._x * _ViewPort._w;
-		screenPos._y = screenPos._y * _ViewPort._h;
+		screenPos._x = screenPos._x * _viewport._w;
+		screenPos._y = screenPos._y * _viewport._h;
 
 		return XVec3f(screenPos._x, screenPos._y, screenPos._z);
 	}

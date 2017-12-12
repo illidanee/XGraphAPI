@@ -5,7 +5,9 @@
 #include <math.h>
 #include "CommonType.h"
 #include "XMath.h"
+#include "XFrustum.h"
 #include "XImage.h"
+
 
 namespace Smile 
 {
@@ -192,12 +194,14 @@ namespace Smile
 		void DrawArray(DRAWMODE drawMode, int start, int end);
 
 		//¾ØÕó²Ù×÷
-		void LoadModelIdentity();
-		void LoadModelMatrix(XMat4f modelMatrix);
-		void LoadViewIdentity();
-		void LoadViewMatrix(XMat4f viewMatrix);
-		void LoadProjectionIdentity();
-		void LoadProjectionMatrix(XMat4f projectMatrix);
+		void LoadMIdentity();
+		void LoadMMatrix(XMat4f mMatrix);
+		void LoadVIdentity();
+		void LoadVMatrix(XMat4f vMatrix);
+		void LoadPIdentity();
+		void LoadPMatrix(XMat4f pMatrix);
+		void LoadPVIdentity();
+		void LoadPVMatrix(XMat4f pvMatrix);
 
 	private:
 		inline BGRA8U _GetPix(unsigned int x, unsigned int y)
@@ -275,10 +279,13 @@ namespace Smile
 
 		XImage* _pImage;
 
-		XMat4f _ModelMatrix;
-		XMat4f _ViewMatrix;
-		XMat4f _ProjectionMatrix;
+		XMat4f _mMatrix;
+		XMat4f _vMatrix;
+		XMat4f _pMatrix;
+		XMat4f _pvMatrix;
 
-		XVec2f _ViewPort;
+		XVec2f _viewport;
+
+		XFrustumf _frustum;
 	};
 }

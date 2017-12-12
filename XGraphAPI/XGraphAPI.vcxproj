@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CommonType.h" />
+    <ClInclude Include="Src\XFrustum.h" />
     <ClInclude Include="Src\XImage.h" />
     <ClInclude Include="Src\XMath.h" />
     <ClInclude Include="Src\XRaster.h" />

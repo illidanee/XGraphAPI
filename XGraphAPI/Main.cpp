@@ -102,7 +102,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	Smile::XMat4f allMatrix;
 
 	Smile::XMat4f translateMatrix;
-	//translateMatrix.Translate(2, 2, -10.0f);
+	translateMatrix.Translate(200, 2, -10.0f);
 
 	Smile::XMat4f scaleMatrix;
 	//scaleMatrix.Scale(1.2f, 1.2f, 1.2f);
@@ -114,8 +114,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	//Draw
 	Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);
 	//raster.LoadModelMatrix(modelMatrix);
-	raster.LoadViewMatrix(viewMatrix);
-	raster.LoadProjectionMatrix(projectMatrix);
+	raster.LoadVMatrix(viewMatrix);
+	raster.LoadPMatrix(projectMatrix);
 
 	//Msg Loop
 	MSG msg = {};
@@ -146,7 +146,7 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		Smile::XMat4f rotateMatrix;
 		//rotateMatrix.Rotate(angle, Smile::XVec3f(1.0f, 1.0f, 0.0f));
 		allMatrix = scaleMatrix * rotateMatrix * translateMatrix;
-		raster.LoadModelMatrix(allMatrix);
+		raster.LoadMMatrix(allMatrix);
 		angle += 1.0f;
 
 		//»æÖÆ
