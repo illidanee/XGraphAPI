@@ -89,11 +89,11 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	DATA data[] = { 
 		{ Smile::XVec3f(-2, -2, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
 		{ Smile::XVec3f(2, -2, 0.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(2, 2, 0.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(2, 2, -2.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
 		{ Smile::XVec3f(-2, -2, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(-2, 2, 0.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(2, 2, 0.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-2, 2, -2.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(2, 2, -2.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 	};
 
 	float angle = 30.0f;
@@ -101,19 +101,23 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	//æÿ’Û≤Ÿ◊˜
 	Smile::XMat4f allMatrix;
 
+	float z = 5.0f;
 	Smile::XMat4f translateMatrix;
-	translateMatrix.Translate(200, 2, -10.0f);
+	translateMatrix.Translate(0, 0, z);
+
+	Smile::XMat4f rotateMatrix;
+	//rotateMatrix.Rotate(angle, Smile::XVec3f(1.0f, 1.0f, 0.0f));
 
 	Smile::XMat4f scaleMatrix;
 	//scaleMatrix.Scale(1.2f, 1.2f, 1.2f);
 
 	Smile::XMat4f modelMatrix = Smile::XMat4f();
 	Smile::XMat4f viewMatrix = Smile::LookAt<float>(Smile::XVec3f(0.0f, 0.0f, 10.0f), Smile::XVec3f(0.0f, 0.0f, 0.0f), Smile::XVec3f(0.0f, 1.0f, 0.0f));
-	Smile::XMat4f projectMatrix = Smile::Perspective<float>(90.0f, (float)_gWindowWidth / _gWindowHeight, 0.01f, 100.0f);
+	Smile::XMat4f projectMatrix = Smile::Perspective<float>(90.0f, (float)_gWindowWidth / _gWindowHeight, 0.01f, 30.0f);
 	
 	//Draw
 	Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);
-	//raster.LoadModelMatrix(modelMatrix);
+	raster.LoadMMatrix(modelMatrix);
 	raster.LoadVMatrix(viewMatrix);
 	raster.LoadPMatrix(projectMatrix);
 
@@ -143,11 +147,10 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		raster.BindTexture(pImageTrain);
 
 		//º”‘ÿæÿ’Û
-		Smile::XMat4f rotateMatrix;
-		//rotateMatrix.Rotate(angle, Smile::XVec3f(1.0f, 1.0f, 0.0f));
+		translateMatrix.Translate(0, 0, z);
 		allMatrix = scaleMatrix * rotateMatrix * translateMatrix;
 		raster.LoadMMatrix(allMatrix);
-		angle += 1.0f;
+		z -= 1.0f;
 
 		//ªÊ÷∆
 		raster.DrawArray(Smile::XRaster::_DRAWTRIANGLES, 0, 6);
