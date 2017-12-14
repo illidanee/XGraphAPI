@@ -1,21 +1,82 @@
 #include <stdio.h>
+#include <complex>
 #include <tchar.h>
 #include <windows.h>
+#include <Windowsx.h>
 
 #include "./Src/CommonType.h"
-#include "./Src/XTimer.h"
 #include "./Src/XImage.h"
+#include "./Src/XTimer.h"
+#include "./Src/XCamera.h"
 #include "./Src/XRaster.h"
 
 //Window Size
 const int _gWindowWidth = 1200;
 const int _gWindowHeight = 900;
 
+//Camera
+Smile::XCamera _gCamera;
+
+Smile::XVec2f _gLButtonLastPosition;
+Smile::XVec2f _gRButtonLastPosition;
+
+bool _gLButtonFlag = false;
+bool _gRButtonFlag = false;
+
+//Timer
+Smile::XTimer timer;
+
+Smile::XVec3f CalcIntersectPoint(Smile::XRayf& ray)
+{
+	Smile::XVec3f origin = ray.GetOrigin();
+	Smile::XVec3f dir = ray.GetDir();
+	float time = abs(origin._y) / abs(dir._y);
+	Smile::XVec3f point = ray.GetPoint(time);
+	return Smile::XVec3f(point._x, 0.0f, point._z);
+}
+
 //Callback Function
 LRESULT CALLBACK WindowProc(_In_ HWND   hwnd, _In_ UINT   uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
 	switch (uMsg)
 	{
+	case WM_LBUTTONDOWN:
+	{
+		_gLButtonLastPosition = Smile::XVec2f(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		_gLButtonFlag = true;
+		break;
+	}
+	case WM_LBUTTONUP:
+	{
+		_gLButtonFlag = false;
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MOUSEMOVE:
+	{
+		Smile::XVec2f pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		if (_gLButtonFlag)
+		{
+			Smile::XRayf ray0 = _gCamera.CreateRayFromScreen(pos);
+			Smile::XRayf ray1 = _gCamera.CreateRayFromScreen(_gLButtonLastPosition);
+			
+			Smile::XVec3f pos0 = CalcIntersectPoint(ray0);
+			Smile::XVec3f pos1 = CalcIntersectPoint(ray1);
+
+			Smile::XVec3f offset = pos0 - pos1;
+
+			Smile::XVec3f eye = _gCamera.GetEye() + offset;
+			Smile::XVec3f aim = _gCamera.GetAim() + offset;
+
+			_gCamera.SetEye(eye);
+			_gCamera.SetAim(aim);
+			_gCamera.Update();
+
+			_gLButtonLastPosition = pos;
+		}
+		break;
+	}
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
@@ -73,12 +134,22 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	HBITMAP hBmp = CreateDIBSection(hMem, &bmpInfo, DIB_RGB_COLORS, (void**)&pBuffer, 0, 0);
 	SelectObject(hMem, hBmp);
 
-	Smile::XTimer timer;
-	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/bgWhite.png");
-	Smile::XImage* pImageTrain = Smile::XImage::LoadFromFile("../Resources/train.png");
-	//pImageTrain->SetWrapType(Smile::XImage::_WT_EDGE);
-	Smile::XImage* pImageGrass = Smile::XImage::LoadFromFile("../Resources/grass.png");
+	//设置相机
+	Smile::XMat4f modelMatrix = Smile::XMat4f();
+	Smile::XMat4f projectMatrix = Smile::Perspective<float>(90.0f, (float)_gWindowWidth / _gWindowHeight, 0.01f, 30.0f);
+	_gCamera.Init();
+	_gCamera.SetMMatrix(modelMatrix);
+	_gCamera.SetPMatrix(projectMatrix);
+	_gCamera.SetViewport(Smile::XVec2f(_gWindowWidth, _gWindowHeight));
 
+	//设置渲染器
+	Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);
+
+	//加载图片
+	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/floor.jpg");
+	pImage->SetWrapType(Smile::XImage::_WT_REPEAT);
+
+	//设置数据
 	struct DATA 
 	{
 		Smile::XVec3f pos;
@@ -87,39 +158,14 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 
 	DATA data[] = { 
-		{ Smile::XVec3f(-2, -2, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(2, -2, 0.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(2, 2, -2.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-15.0f, 0.0f, -15.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(15.0f, 0.0f, -15.0f), Smile::XVec2f(100.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(15.0f, 0.0f, 15.0f), Smile::XVec2f(100.0f, 100.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
-		{ Smile::XVec3f(-2, -2, 0.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(-2, 2, -2.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(2, 2, -2.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-15.0f, 0.0f, -15.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-15.0f, 0.0f, 15.0f), Smile::XVec2f(0.0f, 100.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(15.0f, 0.0f, 15.0f), Smile::XVec2f(100.0f, 100.0f), Smile::BGRA8U(0, 0, 0, 0) },
 	};
-
-	float angle = 30.0f;
-
-	//矩阵操作
-	Smile::XMat4f allMatrix;
-
-	float z = 5.0f;
-	Smile::XMat4f translateMatrix;
-	translateMatrix.Translate(0, 0, z);
-
-	Smile::XMat4f rotateMatrix;
-	//rotateMatrix.Rotate(angle, Smile::XVec3f(1.0f, 1.0f, 0.0f));
-
-	Smile::XMat4f scaleMatrix;
-	//scaleMatrix.Scale(1.2f, 1.2f, 1.2f);
-
-	Smile::XMat4f modelMatrix = Smile::XMat4f();
-	Smile::XMat4f viewMatrix = Smile::LookAt<float>(Smile::XVec3f(0.0f, 0.0f, 10.0f), Smile::XVec3f(0.0f, 0.0f, 0.0f), Smile::XVec3f(0.0f, 1.0f, 0.0f));
-	Smile::XMat4f projectMatrix = Smile::Perspective<float>(90.0f, (float)_gWindowWidth / _gWindowHeight, 0.01f, 30.0f);
-	
-	//Draw
-	Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);
-	raster.LoadMMatrix(modelMatrix);
-	raster.LoadVMatrix(viewMatrix);
-	raster.LoadPMatrix(projectMatrix);
 
 	//Msg Loop
 	MSG msg = {};
@@ -134,23 +180,17 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			DispatchMessage(&msg);
 		}
 		raster.Clean();
-		//Timer Begin
-		timer.Begin();
+		raster.LoadMMatrix(_gCamera.GetMMatrix());
+		raster.LoadVMatrix(_gCamera.GetVMatrix());
+		raster.LoadPMatrix(_gCamera.GetPMatrix());
 
-		//Draw Image
-		raster.DrawImage(0, 0, pImage);
-		
-		//绑定
 		raster.VertexPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].pos);
 		raster.UVPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].uv);
 		raster.ColorPointer(4, Smile::XRaster::_DT_UNSIGNEDCHAR, sizeof(DATA), &data[0].color);
-		raster.BindTexture(pImageTrain);
+		raster.BindTexture(pImage);
 
-		//加载矩阵
-		translateMatrix.Translate(0, 0, z);
-		allMatrix = scaleMatrix * rotateMatrix * translateMatrix;
-		raster.LoadMMatrix(allMatrix);
-		z -= 1.0f;
+		//Timer Begin
+		timer.Begin();
 
 		//绘制
 		raster.DrawArray(Smile::XRaster::_DRAWTRIANGLES, 0, 6);
@@ -166,8 +206,6 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	}
 
 	delete pImage;
-	delete pImageTrain;
-	delete pImageGrass;
 
 	return 0;
 }

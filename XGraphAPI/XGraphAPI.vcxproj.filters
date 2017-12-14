@@ -30,6 +30,9 @@
     <ClCompile Include="Src\XImage.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\XCamera.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CommonType.h">
@@ -48,6 +51,9 @@
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Src\XFrustum.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\XCamera.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

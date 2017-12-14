@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 
 namespace Smile
 {
@@ -33,9 +34,19 @@ namespace Smile
 			return _data[i];
 		}
 
+		_XVector2<T> operator + (const _XVector2<T>& that)
+		{
+			return _XVector2<T>(_data[0] + that._data[0], _data[1] + that._data[1]);
+		}
+
 		_XVector2<T> operator - (const _XVector2<T>& that)
 		{
-			return _XVector2<T>(_x - that._x, _y - that._y);
+			return _XVector2<T>(_data[0] - that._data[0], _data[1] - that._data[1]);
+		}
+
+		_XVector2<T> operator * (const T& factor)
+		{
+			return _XVector2<T>(_data[0] * factor, _data[1] * factor);
 		}
 
 	public:
@@ -89,9 +100,19 @@ namespace Smile
 			return _data[i];
 		}
 
+		_XVector3<T> operator + (const _XVector3<T>& that)
+		{
+			return _XVector3<T>(_data[0] + that._data[0], _data[1] + that._data[1], _data[2] + that._data[2]);
+		}
+
 		_XVector3<T> operator - (const _XVector3<T>& that)
 		{
-			return _XVector3<T>(_x - that._x, _y - that._y, _z - that._z);
+			return _XVector3<T>(_data[0] - that._data[0], _data[1] - that._data[1], _data[2] - that._data[2]);
+		}
+
+		_XVector3<T> operator * (T factor)
+		{
+			return _XVector3<T>(_data[0] * factor, _data[1] * factor, _data[2] * factor);
 		}
 
 	public:
@@ -140,6 +161,21 @@ namespace Smile
 		const T& operator [] (unsigned int i) const
 		{
 			return _data[i];
+		}
+
+		_XVector4<T> operator + (const _XVector4<T>& that)
+		{
+			return _XVector4<T>(_data[0] + that._data[0], _data[1] + that._data[1], _data[2] + that._data[2], _data[3] + that._data[3]);
+		}
+
+		_XVector4<T> operator - (const _XVector4<T>& that)
+		{
+			return _XVector4<T>(_data[0] - that._data[0], _data[1] - that._data[1], _data[2] - that._data[2], _data[3] - that._data[3]);
+		}
+
+		_XVector4<T> operator * (const T& factor)
+		{
+			return _XVector4<T>(_data[0] * factor, _data[1] * factor, _data[2] * factor, _data[3] * factor);
 		}
 
 	public:
@@ -212,18 +248,30 @@ namespace Smile
 			return _row[i];
 		}
 
+		_XMatrix3<T> operator * (const T& factor)
+		{
+			return _XMatrix3<T>
+				(
+					_row[0][0] * factor, _row[0][1] * factor, _row[0][2] * factor,
+					_row[1][0] * factor, _row[1][1] * factor, _row[1][2] * factor,
+					_row[2][0] * factor, _row[2][1] * factor, _row[2][2] * factor
+					);
+		}
+
 		_XVector3<T> operator * (const _XVector3<T>& vector)
 		{
-			return _XVector3<T>(
+			return _XVector3<T>
+			(
 				_row[0][0] * vector[0] + _row[0][1] * vector[1] + _row[0][2] * vector[2],
 				_row[1][0] * vector[0] + _row[1][1] * vector[1] + _row[1][2] * vector[2],
 				_row[2][0] * vector[0] + _row[2][1] * vector[1] + _row[2][2] * vector[2]
-				);
+			);
 		}
 
 		_XMatrix3<T> operator * (const _XMatrix3<T>& matrix)
 		{
-			return _XMatrix3<T>(
+			return _XMatrix3<T>
+			(
 				_row[0][0] * matrix._row[0][0] + _row[0][1] * matrix._row[1][0] + _row[0][2] * matrix._row[2][0],
 				_row[0][0] * matrix._row[0][1] + _row[0][1] * matrix._row[1][1] + _row[0][2] * matrix._row[2][1],
 				_row[0][0] * matrix._row[0][2] + _row[0][1] * matrix._row[1][2] + _row[0][2] * matrix._row[2][2],
@@ -235,7 +283,7 @@ namespace Smile
 				_row[2][0] * matrix._row[0][0] + _row[2][1] * matrix._row[1][0] + _row[2][2] * matrix._row[2][0],
 				_row[2][0] * matrix._row[0][1] + _row[2][1] * matrix._row[1][1] + _row[2][2] * matrix._row[2][1],
 				_row[2][0] * matrix._row[0][2] + _row[2][1] * matrix._row[1][2] + _row[2][2] * matrix._row[2][2]
-				);
+			);
 		}
 
 		void Scale(T x, T y)
@@ -263,11 +311,12 @@ namespace Smile
 
 		_XMatrix3<T> Transpose()
 		{
-			return _XMatrix3<T>(
+			return _XMatrix3<T>
+			(
 				_row[0][0], _row[1][0], _row[2][0],
 				_row[0][1], _row[1][1], _row[2][1],
 				_row[0][2], _row[1][2], _row[2][2]
-				);
+			);
 		}
 
 	private:
@@ -337,9 +386,21 @@ namespace Smile
 			return _row[i];
 		}
 
+		_XMatrix4<T> operator * (const T& factor)
+		{
+			return _XMatrix4<T>
+			(
+				_row[0][0] * factor, _row[0][1] * factor, _row[0][2] * factor, _row[0][3] * factor,
+				_row[1][0] * factor, _row[1][1] * factor, _row[1][2] * factor, _row[1][3] * factor,
+				_row[2][0] * factor, _row[2][1] * factor, _row[2][2] * factor, _row[2][3] * factor,
+				_row[3][0] * factor, _row[3][1] * factor, _row[3][2] * factor, _row[3][3] * factor
+			);
+		}
+
 		_XVector4<T> operator * (const _XVector4<T>& vector)
 		{
-			return _XVector4<T>(
+			return _XVector4<T>
+			(
 				_row[0][0] * vector[0] + _row[0][1] * vector[1] + _row[0][2] * vector[2] + _row[0][3] * vector[3],
 				_row[1][0] * vector[0] + _row[1][1] * vector[1] + _row[1][2] * vector[2] + _row[1][3] * vector[3],
 				_row[2][0] * vector[0] + _row[2][1] * vector[1] + _row[2][2] * vector[2] + _row[2][3] * vector[3],
@@ -371,6 +432,58 @@ namespace Smile
 				_row[3][0] * matrix._row[0][2] + _row[3][1] * matrix._row[1][2] + _row[3][2] * matrix._row[2][2] + _row[3][3] * matrix._row[3][2],
 				_row[3][0] * matrix._row[0][3] + _row[3][1] * matrix._row[1][3] + _row[3][2] * matrix._row[2][3] + _row[3][3] * matrix._row[3][3]
 			};
+		}
+
+		_XMatrix4<T> Inverse() const
+		{
+			T subFactor00 = _row[2][2] * _row[3][3] - _row[2][3] * _row[3][2];
+			T subFactor01 = _row[1][2] * _row[3][3] - _row[1][3] * _row[3][2];
+			T subFactor02 = _row[1][2] * _row[2][3] - _row[1][3] * _row[2][2];
+			T subFactor03 = _row[0][2] * _row[3][3] - _row[0][3] * _row[3][2];
+			T subFactor04 = _row[0][2] * _row[2][3] - _row[0][3] * _row[2][2];
+			T subFactor05 = _row[0][2] * _row[1][3] - _row[0][3] * _row[1][2];
+			T subFactor06 = _row[2][1] * _row[3][3] - _row[2][3] * _row[3][1];
+			T subFactor07 = _row[1][1] * _row[3][3] - _row[1][3] * _row[3][1];
+			T subFactor08 = _row[1][1] * _row[2][3] - _row[1][3] * _row[2][1];
+			T subFactor09 = _row[0][1] * _row[3][3] - _row[0][3] * _row[3][1];
+			T subFactor10 = _row[0][1] * _row[2][3] - _row[0][3] * _row[2][1];
+			T subFactor11 = _row[1][1] * _row[3][3] - _row[1][3] * _row[3][1];
+			T SubFactor12 = _row[0][1] * _row[1][3] - _row[0][3] * _row[1][1];
+			T subFactor13 = _row[2][1] * _row[3][2] - _row[2][2] * _row[3][1];
+			T subFactor14 = _row[1][1] * _row[3][2] - _row[1][2] * _row[3][1];
+			T subFactor15 = _row[1][1] * _row[2][2] - _row[1][2] * _row[2][1];
+			T subFactor16 = _row[0][1] * _row[3][2] - _row[0][2] * _row[3][1];
+			T subFactor17 = _row[0][1] * _row[2][2] - _row[0][2] * _row[2][1];
+			T subFactor18 = _row[0][1] * _row[1][2] - _row[0][2] * _row[1][1];
+
+			_XMatrix4<T> res
+			(
+				+_row[1][1] * subFactor00 - _row[2][1] * subFactor01 + _row[3][1] * subFactor02,
+				-_row[0][1] * subFactor00 + _row[2][1] * subFactor03 - _row[3][1] * subFactor04,
+				+_row[0][1] * subFactor01 - _row[1][1] * subFactor03 + _row[3][1] * subFactor05,
+				-_row[0][1] * subFactor02 + _row[1][1] * subFactor04 - _row[2][1] * subFactor05,
+
+				-_row[1][0] * subFactor00 + _row[2][0] * subFactor01 - _row[3][0] * subFactor02,
+				+_row[0][0] * subFactor00 - _row[2][0] * subFactor03 + _row[3][0] * subFactor04,
+				-_row[0][0] * subFactor01 + _row[1][0] * subFactor03 - _row[3][0] * subFactor05,
+				+_row[0][0] * subFactor02 - _row[1][0] * subFactor04 + _row[2][0] * subFactor05,
+
+				+_row[1][0] * subFactor06 - _row[2][0] * subFactor07 + _row[3][0] * subFactor08,
+				-_row[0][0] * subFactor06 + _row[2][0] * subFactor09 - _row[3][0] * subFactor10,
+				+_row[0][0] * subFactor11 - _row[1][0] * subFactor09 + _row[3][0] * SubFactor12,
+				-_row[0][0] * subFactor08 + _row[1][0] * subFactor10 - _row[2][0] * SubFactor12,
+
+				-_row[1][0] * subFactor13 + _row[2][0] * subFactor14 - _row[3][0] * subFactor15,
+				+_row[0][0] * subFactor13 - _row[2][0] * subFactor16 + _row[3][0] * subFactor17,
+				-_row[0][0] * subFactor14 + _row[1][0] * subFactor16 - _row[3][0] * subFactor18,
+				+_row[0][0] * subFactor15 - _row[1][0] * subFactor17 + _row[2][0] * subFactor18
+			);
+
+			T determinant = + _row[0][0] * res[0][0] + _row[1][0] * res[0][1] + _row[2][0] * res[0][2] + _row[3][0] * res[0][3];
+
+			res = res * (1.0f / determinant);
+
+			return res;
 		}
 
 		void Scale(T x, T y, T z)
@@ -407,12 +520,13 @@ namespace Smile
 
 		_XMatrix4<T> Transpose()
 		{
-			return _XMatrix4<T>(
+			return _XMatrix4<T>
+			(
 				_row[0][0], _row[1][0], _row[2][0], _row[3][0],
 				_row[0][1], _row[1][1], _row[2][1], _row[3][1],
 				_row[0][2], _row[1][2], _row[2][2], _row[3][2],
 				_row[0][3], _row[1][3], _row[2][3], _row[3][3]
-				);
+			);
 		}
 
 	private:
@@ -423,6 +537,34 @@ namespace Smile
 
 
 	/****************************************************************************************************************
+	 *    Date    : 2017/12/14 14:27
+	 *
+	 *    Author  : Smile
+	 *    Contact : smile@illidan.org
+	 *
+	 *    Brief   : 射线类
+	 *
+	 ****************************************************************************************************************/
+	template<typename T>
+	class _XRay
+	{
+	public:
+		_XRay() {}
+		_XRay(_XVector3<T> origin, _XVector3<T> dir) { _origin = origin, _dir = dir; }
+
+		_XVector3<T> GetPoint(T time) { return _origin + _dir * time; }
+
+		_XVector3<T> GetOrigin() { return _origin; }
+		_XVector3<T> GetDir() { return _dir; }
+
+	private:
+		_XVector3<T> _origin;
+		_XVector3<T> _dir;
+	};
+
+	typedef _XRay<float> XRayf;
+
+	/****************************************************************************************************************
 	 *    Date    : 2017/12/12 14:20
 	 *
 	 *    Author  : Smile
@@ -431,6 +573,51 @@ namespace Smile
 	 *    Brief   : 全局函数
 	 *
 	 ****************************************************************************************************************/
+	template<typename T>
+	_XVector3<T> RotateX(const _XVector3<T>& vector, T angle)
+	{
+		T c = cosf(ANGLE2RADIAN(angle));
+		T s = sinf(ANGLE2RADIAN(angle));
+
+		_XVector3<T> res;
+		res._y = vector._y * c - vector._z * s;
+		res._z = vector._y * s + vector._z * c;
+
+		return res;
+	}
+
+	template<typename T>
+	_XVector3<T> RotateY(const _XVector3<T>& vector, T angle)
+	{
+		T c = cosf(ANGLE2RADIAN(angle));
+		T s = sinf(ANGLE2RADIAN(angle));
+
+		_XVector3<T> res;
+		res._x = vector._x * c + vector._z * s;
+		res._z = -vector._x * s + vector._z * c;
+
+		return res;
+	}
+
+	template<typename T>
+	_XVector3<T> RotateZ(const _XVector3<T>& vector, T angle)
+	{
+		T c = cosf(ANGLE2RADIAN(angle));
+		T s = sinf(ANGLE2RADIAN(angle));
+
+		_XVector3<T> res;
+		res._x = vector._x * c - vector._y * s;
+		res._y = vector._x * s + vector._y * c;
+
+		return res;
+	}
+
+	template<typename T>
+	T Length(const _XVector3<T>& vector)
+	{
+		return sqrtf(vector._x * vector._x + vector._y * vector._y + vector._z * vector._z);
+	}
+
 	template<typename T>
 	_XVector3<T> Normalize(_XVector3<T> vector)
 	{
@@ -447,17 +634,18 @@ namespace Smile
 	template<typename T>
 	_XVector3<T> Cross(_XVector3<T> vector1, _XVector3<T> vector2)
 	{
-		return _XVector3<T>(
+		return _XVector3<T>
+		(
 			vector1._y * vector2._z - vector2._y * vector1._z,
 			vector1._z * vector2._x - vector2._z * vector1._x,
 			vector1._x * vector2._y - vector2._x * vector1._y
-			);
+		);
 	}
 
 	template<typename T>
-	_XMatrix4<T> LookAt(_XVector3<T> pos, _XVector3<T> forward, _XVector3<T> up)
+	_XMatrix4<T> LookAt(_XVector3<T> eye, _XVector3<T> aim, _XVector3<T> up)
 	{
-		_XVector3<T> f = Normalize<T>(pos - forward);
+		_XVector3<T> f = Normalize<T>(eye - aim);
 		_XVector3<T> u = Normalize<T>(up);
 		_XVector3<T> r = Normalize<T>(Cross<T>(u, f));
 		u = Normalize<T>(Cross<T>(f, r));
@@ -467,17 +655,17 @@ namespace Smile
 		vMatrix[0][0] = r._x;
 		vMatrix[0][1] = r._y;
 		vMatrix[0][2] = r._z;
-		vMatrix[0][3] = -Dot<T>(r, pos);
+		vMatrix[0][3] = -Dot<T>(r, eye);
 
 		vMatrix[1][0] = u._x;
 		vMatrix[1][1] = u._y;
 		vMatrix[1][2] = u._z;
-		vMatrix[1][3] = -Dot<T>(u, pos);
+		vMatrix[1][3] = -Dot<T>(u, eye);
 
 		vMatrix[2][0] = f._x;
 		vMatrix[2][1] = f._y;
 		vMatrix[2][2] = f._z;
-		vMatrix[2][3] = -Dot<T>(f, pos);
+		vMatrix[2][3] = -Dot<T>(f, eye);
 
 		return vMatrix;
 	}

@@ -512,10 +512,10 @@ namespace Smile
 			XVec3f pos3Temp3(pos3Temp4._x, pos3Temp4._y, pos3Temp4._z);
 
 			//裁剪坐标
-			if (!_frustum.PointInFrustum(pos1Temp3) && !_frustum.PointInFrustum(pos2Temp3) && !_frustum.PointInFrustum(pos3Temp3))
-			{
-				return;
-			}
+			//if (!_frustum.PointInFrustum(pos1Temp3) && !_frustum.PointInFrustum(pos2Temp3) && !_frustum.PointInFrustum(pos3Temp3))
+			//{
+			//	return;
+			//}
 
 			//固定管线计算。
 			pos1Temp3 = _Pipeline(pos1Temp3);
