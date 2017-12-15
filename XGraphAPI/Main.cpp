@@ -52,7 +52,16 @@ LRESULT CALLBACK WindowProc(_In_ HWND   hwnd, _In_ UINT   uMsg, _In_ WPARAM wPar
 		break;
 	}
 	case WM_RBUTTONDOWN:
+	{
+		_gRButtonLastPosition = Smile::XVec2f(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		_gRButtonFlag = true;
+		break;
+	}
 	case WM_RBUTTONUP:
+	{
+		_gRButtonFlag = false;
+		break;
+	}
 	case WM_MOUSEMOVE:
 	{
 		Smile::XVec2f pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -66,6 +75,8 @@ LRESULT CALLBACK WindowProc(_In_ HWND   hwnd, _In_ UINT   uMsg, _In_ WPARAM wPar
 
 			Smile::XVec3f offset = pos0 - pos1;
 
+			offset._x = -offset._x;
+
 			Smile::XVec3f eye = _gCamera.GetEye() + offset;
 			Smile::XVec3f aim = _gCamera.GetAim() + offset;
 
@@ -74,6 +85,39 @@ LRESULT CALLBACK WindowProc(_In_ HWND   hwnd, _In_ UINT   uMsg, _In_ WPARAM wPar
 			_gCamera.Update();
 
 			_gLButtonLastPosition = pos;
+		}
+		if (_gRButtonFlag)
+		{
+			int offsetX = pos._x - _gRButtonLastPosition._x;
+			int offsetY = pos._y - _gRButtonLastPosition._y;
+
+			_gCamera.RotateX(offsetY);
+			_gCamera.RotateY(offsetX);
+
+			_gRButtonLastPosition = pos;
+		}
+		break;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		short delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		if (delta > 0)
+		{
+			Smile::XVec3f aim = _gCamera.GetAim();
+			Smile::XVec3f eye = _gCamera.GetEye();
+			Smile::XVec3f dir = _gCamera.GetDir();
+			float len = Length(aim - eye);
+			_gCamera.SetEye(aim - dir * len * 1.2);
+			_gCamera.Update();
+		}
+		else
+		{
+			Smile::XVec3f aim = _gCamera.GetAim();
+			Smile::XVec3f eye = _gCamera.GetEye();
+			Smile::XVec3f dir = _gCamera.GetDir();
+			float len = Length(aim - eye);
+			_gCamera.SetEye(aim - dir * len * 0.9);
+			_gCamera.Update();
 		}
 		break;
 	}
@@ -136,7 +180,8 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	//…Ë÷√œ‡ª˙
 	Smile::XMat4f modelMatrix = Smile::XMat4f();
-	Smile::XMat4f projectMatrix = Smile::Perspective<float>(90.0f, (float)_gWindowWidth / _gWindowHeight, 0.01f, 30.0f);
+	//Smile::XMat4f viewMatrix = Smile::LookAt(Smile::XVec3f(0.0f, 10.0f, 10.0f), Smile::XVec3f(0.0f, 0.0f, 0.0f), Smile::XVec3f(0.0f, 1.0f, 0.0f));
+	Smile::XMat4f projectMatrix = Smile::Perspective<float>(60.0f, (float)_gWindowWidth / _gWindowHeight, 1.0f, 100.0f);
 	_gCamera.Init();
 	_gCamera.SetMMatrix(modelMatrix);
 	_gCamera.SetPMatrix(projectMatrix);
@@ -144,6 +189,13 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	//…Ë÷√‰÷»æ∆˜
 	Smile::XRaster raster(pBuffer, _gWindowWidth, _gWindowHeight);
+	//raster.LoadMMatrix(modelMatrix);
+	//raster.LoadVMatrix(viewMatrix);
+	//raster.LoadPMatrix(projectMatrix);
+
+	raster.LoadMMatrix(_gCamera.GetMMatrix());
+	raster.LoadVMatrix(_gCamera.GetVMatrix());
+	raster.LoadPMatrix(_gCamera.GetPMatrix());
 
 	//º”‘ÿÕº∆¨
 	Smile::XImage* pImage = Smile::XImage::LoadFromFile("../Resources/floor.jpg");
@@ -158,14 +210,24 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 
 	DATA data[] = { 
-		{ Smile::XVec3f(-15.0f, 0.0f, -15.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(15.0f, 0.0f, -15.0f), Smile::XVec2f(100.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(15.0f, 0.0f, 15.0f), Smile::XVec2f(100.0f, 100.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-1.0f, 0.0f, 1.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(1.0f, 0.0f, 1.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(1.0f, 0.0f, -1.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
-		{ Smile::XVec3f(-15.0f, 0.0f, -15.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(-15.0f, 0.0f, 15.0f), Smile::XVec2f(0.0f, 100.0f), Smile::BGRA8U(0, 0, 0, 0) },
-		{ Smile::XVec3f(15.0f, 0.0f, 15.0f), Smile::XVec2f(100.0f, 100.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-1.0f, 0.0f, 1.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-1.0f, 0.0f, -1.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(1.0f, 0.0f, -1.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) }
+		
 	};
+
+	for (int i = 0; i < 6; ++i)
+	{
+		data[i].pos._x *= 10;
+		data[i].pos._z *= 10;
+
+		data[i].uv._u *= 10;
+		data[i].uv._v *= 10;
+	}
 
 	//Msg Loop
 	MSG msg = {};
@@ -179,15 +241,14 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		raster.Clean();
-		raster.LoadMMatrix(_gCamera.GetMMatrix());
-		raster.LoadVMatrix(_gCamera.GetVMatrix());
-		raster.LoadPMatrix(_gCamera.GetPMatrix());
+		raster.Clean();
 
 		raster.VertexPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].pos);
 		raster.UVPointer(2, Smile::XRaster::_DT_FLOAT, sizeof(DATA), &data[0].uv);
 		raster.ColorPointer(4, Smile::XRaster::_DT_UNSIGNEDCHAR, sizeof(DATA), &data[0].color);
 		raster.BindTexture(pImage);
+
+		raster.LoadVMatrix(_gCamera.GetVMatrix());
 
 		//Timer Begin
 		timer.Begin();

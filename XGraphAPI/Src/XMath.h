@@ -645,10 +645,11 @@ namespace Smile
 	template<typename T>
 	_XMatrix4<T> LookAt(_XVector3<T> eye, _XVector3<T> aim, _XVector3<T> up)
 	{
-		_XVector3<T> f = Normalize<T>(eye - aim);
 		_XVector3<T> u = Normalize<T>(up);
+
+		_XVector3<T> f = Normalize<T>(eye - aim);
 		_XVector3<T> r = Normalize<T>(Cross<T>(u, f));
-		u = Normalize<T>(Cross<T>(f, r));
+		_XVector3<T> v = Normalize<T>(Cross<T>(f, r));
 
 		_XMatrix4<T> vMatrix;
 
@@ -657,10 +658,10 @@ namespace Smile
 		vMatrix[0][2] = r._z;
 		vMatrix[0][3] = -Dot<T>(r, eye);
 
-		vMatrix[1][0] = u._x;
-		vMatrix[1][1] = u._y;
-		vMatrix[1][2] = u._z;
-		vMatrix[1][3] = -Dot<T>(u, eye);
+		vMatrix[1][0] = v._x;
+		vMatrix[1][1] = v._y;
+		vMatrix[1][2] = v._z;
+		vMatrix[1][3] = -Dot<T>(v, eye);
 
 		vMatrix[2][0] = f._x;
 		vMatrix[2][1] = f._y;
@@ -668,12 +669,22 @@ namespace Smile
 		vMatrix[2][3] = -Dot<T>(f, eye);
 
 		return vMatrix;
+
+		//_XVector3<T> W = Normalize<T>(aim - eye);
+		//_XVector3<T> U = Normalize<T>(Cross<T>(up, W));
+		//_XVector3<T> V = Normalize<T>(Cross<T>(W, U));
+
+		//_XMatrix4<T> R(U._x, U._y, U._z, 0.0f, V._x, V._y, V._z, 0.0f, W._x, W._y, W._z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+		//_XMatrix4<T> T(1.0f, 0.0f, 0.0f, -eye._x, 0.0f, 1.0f, 0.0f, -eye._y, 0.0f, 0.0f, 1.0f, -eye._z, 0.0f, 0.0f, 0.0f, 1.0f);
+
+		//return R * T;
 	}
 
 	template<typename T>
 	_XMatrix4<T> Perspective(T fovy, T aspect, T zNear, T zFar)
 	{
-		T range = tanf(ANGLE2RADIAN(fovy * 0.5f)) * zNear;
+		T range = tan(ANGLE2RADIAN(fovy * 0.5f)) * zNear;
 		T left = -range * aspect;
 		T right = range * aspect;
 		T bottom = -range;
@@ -681,15 +692,22 @@ namespace Smile
 
 		_XMatrix4<T> pMatrix;
 
-		pMatrix[0][0] = (2.0f * zNear) / (right - left);
-		pMatrix[0][2] = (right + left) / (right - left);
+		//pMatrix[0][0] = (2.0f * zNear) / (right - left);
+		//pMatrix[0][2] = (right + left) / (right - left);
 
-		pMatrix[1][1] = (2.0f * zNear) / (top - bottom);
-		pMatrix[1][2] = (top + bottom) / (top - bottom);
+		//pMatrix[1][1] = (2.0f * zNear) / (top - bottom);
+		//pMatrix[1][2] = (top + bottom) / (top - bottom);
 
+		//pMatrix[2][2] = -(zFar + zNear) / (zFar - zNear);
+		//pMatrix[2][3] = -(2.0f * zFar * zNear) / (zFar - zNear);
+
+		//pMatrix[3][2] = -1.0f;
+		//pMatrix[3][3] = 0.0f;
+
+		pMatrix[0][0] = zNear / right;
+		pMatrix[1][1] = zNear / top;
 		pMatrix[2][2] = -(zFar + zNear) / (zFar - zNear);
 		pMatrix[2][3] = -(2.0f * zFar * zNear) / (zFar - zNear);
-
 		pMatrix[3][2] = -1.0f;
 		pMatrix[3][3] = 0.0f;
 

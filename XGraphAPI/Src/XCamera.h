@@ -18,7 +18,7 @@ namespace Smile
 	{
 	public:
 		XCamera();
-		void Init(XVec3f eye = XVec3f(0.0f, 10.0f, 10.0f), XVec3f aim = XVec3f(0.0f, 0.0f, 0.0f), XVec3f right = XVec3f(1.0f, 0.0f, 0.0f));
+		void Init(XVec3f eye = XVec3f(0.0f, 20.0f, 20.0f), XVec3f aim = XVec3f(0.0f, 0.0f, 0.0f), XVec3f right = XVec3f(1.0f, 0.0f, 0.0f));
 		void Update();
 
 		void RotateX(float angle);

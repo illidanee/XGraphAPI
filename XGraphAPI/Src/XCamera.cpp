@@ -31,7 +31,7 @@ namespace Smile
 		mat.Rotate(angle, _right);
 
 		XVec4f vectorDir(_dir._x, _dir._y, _dir._z, 1.0f);
-		XVec4f vectorUp(_dir._x, _dir._y, _dir._z, 1.0f);
+		XVec4f vectorUp(_up._x, _up._y, _up._z, 1.0f);
 
 		vectorDir = mat * vectorDir;
 		vectorUp = mat * vectorUp;
@@ -54,7 +54,7 @@ namespace Smile
 		mat.Rotate(angle, yAxis);
 
 		XVec4f vectorDir(_dir._x, _dir._y, _dir._z, 1.0f);
-		XVec4f vectorUp(_dir._x, _dir._y, _dir._z, 1.0f);
+		XVec4f vectorUp(_up._x, _up._y, _up._z, 1.0f);
 
 		vectorDir = mat * vectorDir;
 		vectorUp = mat * vectorUp;

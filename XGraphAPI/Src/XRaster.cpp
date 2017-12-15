@@ -491,33 +491,53 @@ namespace Smile
 		end = end / 3 * 3;
 		for (int i = start; i < end; i += 3)
 		{
-			//Vertex
-			//char* pPosData = (char*)_vertex._pData;
-			float* pPos = (float*)pPosData;
-			XVec4f pos1Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
-			pPosData += _vertex._stride;
-			pPos = (float*)pPosData;
-			XVec4f pos2Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
-			pPosData += _vertex._stride;
-			pPos = (float*)pPosData;
-			XVec4f pos3Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
+//带有视景体裁剪
+			////Vertex
+			////char* pPosData = (char*)_vertex._pData;
+			//float* pPos = (float*)pPosData;
+			//XVec4f pos1Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
+			//pPosData += _vertex._stride;
+			//pPos = (float*)pPosData;
+			//XVec4f pos2Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
+			//pPosData += _vertex._stride;
+			//pPos = (float*)pPosData;
+			//XVec4f pos3Temp4(pPos[0], pPos[1], pPos[2], 1.0f);
 
-			//将顶点从模型本地坐标系转换到世界坐标系。
-			pos1Temp4 = _mMatrix * pos1Temp4;
-			pos2Temp4 = _mMatrix * pos2Temp4;
-			pos3Temp4 = _mMatrix * pos3Temp4;
+			////将顶点从模型本地坐标系转换到世界坐标系。
+			//pos1Temp4 = _mMatrix * pos1Temp4;
+			//pos2Temp4 = _mMatrix * pos2Temp4;
+			//pos3Temp4 = _mMatrix * pos3Temp4;
 
-			XVec3f pos1Temp3(pos1Temp4._x, pos1Temp4._y, pos1Temp4._z);
-			XVec3f pos2Temp3(pos2Temp4._x, pos2Temp4._y, pos2Temp4._z);
-			XVec3f pos3Temp3(pos3Temp4._x, pos3Temp4._y, pos3Temp4._z);
+			//XVec3f pos1Temp3(pos1Temp4._x, pos1Temp4._y, pos1Temp4._z);
+			//XVec3f pos2Temp3(pos2Temp4._x, pos2Temp4._y, pos2Temp4._z);
+			//XVec3f pos3Temp3(pos3Temp4._x, pos3Temp4._y, pos3Temp4._z);
 
-			//裁剪坐标
+			////裁剪坐标
 			//if (!_frustum.PointInFrustum(pos1Temp3) && !_frustum.PointInFrustum(pos2Temp3) && !_frustum.PointInFrustum(pos3Temp3))
 			//{
 			//	return;
 			//}
 
-			//固定管线计算。
+			////固定管线计算。
+			//pos1Temp3 = _Pipeline(pos1Temp3);
+			//pos2Temp3 = _Pipeline(pos2Temp3);
+			//pos3Temp3 = _Pipeline(pos3Temp3);
+
+			////以下是二维绘制。
+			//XVec2f pos1(pos1Temp3._x, pos1Temp3._y);
+			//XVec2f pos2(pos2Temp3._x, pos2Temp3._y);
+			//XVec2f pos3(pos3Temp3._x, pos3Temp3._y);
+
+//没有视景体裁剪
+			float* pPos = (float*)pPosData;
+			XVec3f pos1Temp3(pPos[0], pPos[1], pPos[2]);
+			pPosData += _vertex._stride;
+			pPos = (float*)pPosData;
+			XVec3f pos2Temp3(pPos[0], pPos[1], pPos[2]);
+			pPosData += _vertex._stride;
+			pPos = (float*)pPosData;
+			XVec3f pos3Temp3(pPos[0], pPos[1], pPos[2]);
+
 			pos1Temp3 = _Pipeline(pos1Temp3);
 			pos2Temp3 = _Pipeline(pos2Temp3);
 			pos3Temp3 = _Pipeline(pos3Temp3);
@@ -731,10 +751,10 @@ namespace Smile
 		XVec4f worldPos(vector._x, vector._y, vector._z, 1.0f);
 
 		//坐标转换
-		XVec4f screenPos = _pvMatrix * worldPos;
+		XVec4f screenPos = _pMatrix * _vMatrix * _mMatrix * worldPos;
 
 		if (screenPos._w == 0)
-			return XVec3f();
+			return XVec3f(0, 0, 0);
 
 		//转换到（-1 ~ +1）
 		screenPos._x /= screenPos._w;
@@ -751,6 +771,6 @@ namespace Smile
 		screenPos._y = screenPos._y * _viewport._h;
 
 		return XVec3f(screenPos._x, screenPos._y, screenPos._z);
-	}
+   	}
 }
 
