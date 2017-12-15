@@ -93,9 +93,10 @@ LRESULT CALLBACK WindowProc(_In_ HWND   hwnd, _In_ UINT   uMsg, _In_ WPARAM wPar
 
 			_gCamera.RotateX(offsetY);
 			_gCamera.RotateY(offsetX);
-
-			_gRButtonLastPosition = pos;
 		}
+
+		_gLButtonLastPosition = pos;
+		_gRButtonLastPosition = pos;
 		break;
 	}
 	case WM_MOUSEWHEEL:
@@ -214,16 +215,16 @@ int __stdcall WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{ Smile::XVec3f(1.0f, 0.0f, 1.0f), Smile::XVec2f(1.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
 		{ Smile::XVec3f(1.0f, 0.0f, -1.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
 
-		{ Smile::XVec3f(-1.0f, 0.0f, 1.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
 		{ Smile::XVec3f(-1.0f, 0.0f, -1.0f), Smile::XVec2f(0.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) },
+		{ Smile::XVec3f(-1.0f, 0.0f, 1.0f), Smile::XVec2f(0.0f, 0.0f), Smile::BGRA8U(0, 0, 0, 0) },
 		{ Smile::XVec3f(1.0f, 0.0f, -1.0f), Smile::XVec2f(1.0f, 1.0f), Smile::BGRA8U(0, 0, 0, 0) }
 		
 	};
 
 	for (int i = 0; i < 6; ++i)
 	{
-		data[i].pos._x *= 10;
-		data[i].pos._z *= 10;
+		data[i].pos._x *= 20;
+		data[i].pos._z *= 20;
 
 		data[i].uv._u *= 10;
 		data[i].uv._v *= 10;
